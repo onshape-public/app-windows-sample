@@ -14,11 +14,11 @@ Sample Onshape App registration parameters:
 
 Base URL, Client Id, and Client Secret used by the sample are extracted from the environment variables. 
 
-Environment variables can be set in ![developer command prompt](C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\Shortcuts) before launching Visual Studio:
+Environment variables can be set in developer command prompt before launching Visual Studio:
 
->SET ONSHAPE_BASE_URI=https://partner.dev.onshape.com
->SET ONSHAPE_CLIENT_SECRET=TLLFGK56YJSL2...
->SET ONSHAPE_CLIENT_ID=K5SUPTJ3NX3LUA2...
+>SET ONSHAPE_BASE_URI=https://partner.dev.onshape.com 
+>SET ONSHAPE_CLIENT_SECRET=TLLFGK56YJSL2... 
+>SET ONSHAPE_CLIENT_ID=K5SUPTJ3NX3LUA2...  
 
 or set globally in the configuration panel:
 
