@@ -1,15 +1,15 @@
 # Onshape Windows Sample
 
-Onshape Windows Sample constains sample projects which demonstrate Onshape OAuth authentication workflow in Windows desktok application. 
-
-The sample projects are collected into a Visual Studio solution, implemented in c#.
+Onshape Windows Sample is a collection of sample projects which demonstrate Onshape OAuth authentication and Onshape REST API workflow on Windows platform. 
 
 ## Prerequisites
 
 - [Visual Studio 2013](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) 
+
 - [Registered Onshape App](https://dev-portal.dev.onshape.com/oauthApps).
 
-Here's an example of Onshape App registration parameters:
+Sample Onshape App registration parameters:
+
 ![AppRegistration](AppRegistration.PNG)
 
 Base URL, Client Id, and Client Secret used by the sample are extracted from the environment variables. 
@@ -34,20 +34,23 @@ Open solution (in developper command prompt):
 Select "Debug > Start Debugging" in Visual Studio menue to start the sample.
 
 Onshape authentication page in a browser should appear:
+
 ![Start](Start.PNG)
 
-List of the user's documents should be printed in JSON format, and interactive console should be started:
+List of the user's document should be printed in JSON format, and interactive prompt should appear:
+
 ![Console](Console.PNG)
 
 ## Projects
 
-OnshapeClient - a .NET library, skeleton project which encapsulate Onshape REST API interface;
-OnshapeConsoleApp - .NET executable, a skeleton console application whch wraps some of the RES API entry points into command line based commands.
+- OnshapeClient - a .NET library, skeleton project which encapsulate Onshape REST API interface;
+
+- OnshapeConsoleApp - .NET executable, a skeleton console application whch wraps some of the RES API entry points into command line based commands.
 
 ## References
 
-- ![Onshape Partner Development](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/a059a060a80a420ba7a4b534)
-- ![Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
-- ![Onshape partner development stack](https://partner.dev.onshape.com)
-- ![Onshape developper portal](https://dev-portal.dev.onshape.com)
-- ![Wisual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
+- ![ Onshape Partner Development](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/a059a060a80a420ba7a4b534)
+- ![ Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
+- ![ Onshape partner development stack](https://partner.dev.onshape.com)
+- ![ Onshape developper portal](https://dev-portal.dev.onshape.com)
+- ![ Wisual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
