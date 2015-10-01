@@ -43,9 +43,9 @@ List of the user's document should be printed in JSON format, and interactive pr
 
 ## Projects
 
-- OnshapeClient - a .NET library, skeleton project which encapsulate Onshape REST API interface;
+- OnshapeClient - a .NET library, skeleton project which encapsulates Onshape REST API interface;
 
-- OnshapeConsoleApp - .NET executable, a skeleton console application whch wraps some of the RES API entry points into command line based commands.
+- OnshapeConsoleApp - .NET executable, a skeleton console application whch wraps some of the REST API entry points into commands exposed through the command line interface.
 
 ## References
 
@@ -53,4 +53,4 @@ List of the user's document should be printed in JSON format, and interactive pr
 - ![ Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
 - ![ Onshape partner development stack](https://partner.dev.onshape.com)
 - ![ Onshape developper portal](https://dev-portal.dev.onshape.com)
-- ![ Wisual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
+- ![ Visual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
