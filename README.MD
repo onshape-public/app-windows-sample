@@ -16,9 +16,11 @@ Base URL, Client Id, and Client Secret used by the sample are extracted from the
 
 Environment variables can be set in developer command prompt before launching Visual Studio:
 
+```
 >SET ONSHAPE_BASE_URI=https://partner.dev.onshape.com 
 >SET ONSHAPE_CLIENT_SECRET=TLLFGK56YJSL2... 
 >SET ONSHAPE_CLIENT_ID=K5SUPTJ3NX3LUA2...  
+```
 
 or set globally in the configuration panel:
 
@@ -26,10 +28,12 @@ or set globally in the configuration panel:
 
 ## How to run
 
-Open solution (in developper command prompt):
+Open OnshapeWindowsSample.sln solution in Windows UI, or in developper command prompt:
 
+```
 >cd c:\dev\OnshapeWindowsSample
 >devenv OnshapeWindowsSample.sln
+```
 
 Select "Debug > Start Debugging" in Visual Studio menue to start the sample.
 
