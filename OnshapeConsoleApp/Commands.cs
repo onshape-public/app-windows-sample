@@ -15,7 +15,7 @@ namespace Onshape.Api.ConsoleApp
 
         internal static Dictionary<String, Command> commands = new Dictionary<String, Command>() {
             {@"GET", new Command {
-                Description = @"Generic GET: 'onshapeConsoleApp GET uri'", 
+                Description = @"Generic GET: 'onshapeConsoleApp GET uri', e.g. 'GET /api/documents'", 
                 Worker = GenericGet, 
                 Options = new List<CommandOption> { 
                 }}},
@@ -42,12 +42,6 @@ namespace Onshape.Api.ConsoleApp
                 MaxArgs = 1,
                 Options = new List<CommandOption> { 
                 }}},
-            {@"DELETE_DOCUMENTS", new Command {
-                Description = @"Delete existing document: 'onshapeConsoleApp DELETE documents -d <did>'",
-                Worker = DeleteDocument,
-                Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1}
-                }}},
             {@"GET_WORKSPACES",new Command { 
                 Description = @"Get workspaces: GET workspaces 'onshapeConsoleApp -d <did> [-w <wid>]'",
                 Worker = GetWorkspaces,
@@ -70,7 +64,7 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Reqiuired = false, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1}
                 }}},
             {@"DELETE_VERSIONS", new Command {
-                Description = @"Detele existing version: 'onshapeConsoleApp DELETE versions -d <did> -v <vid>'",
+                Description = @"Delete existing version: 'onshapeConsoleApp DELETE versions -d <did> -v <vid>'",
                 Worker = DeleteVersion,
                 Options = new List<CommandOption> { 
                     new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1},
@@ -116,7 +110,7 @@ namespace Onshape.Api.ConsoleApp
         {
             if (values != null && values.Count == 1)
             {
-                var response = await context.Client.HttpGet(context.BaseURL + values[0]);
+                var response = await context.Client.HttpGet(values[0].StartsWith(context.BaseURL) ? values[0]: context.BaseURL + values[0]);
                 Console.WriteLine(String.Format("Response:\n{0}\nBody:\n{1}", response, await response.Content.ReadAsStringAsync()));
             }
         }
@@ -125,7 +119,7 @@ namespace Onshape.Api.ConsoleApp
         {
             if (values != null && values.Count == 2)
             {
-                var response = await context.Client.HttpPostJson(context.BaseURL + values[0], values[1]);
+                var response = await context.Client.HttpPostJson(values[0].StartsWith(context.BaseURL) ? values[0] : context.BaseURL + values[0], values[1]);
                 Console.WriteLine(String.Format("Response:\n{0}\nBody:\n{1}", response, await response.Content.ReadAsStringAsync()));
             }
         }
@@ -134,7 +128,7 @@ namespace Onshape.Api.ConsoleApp
         {
             if (values != null && values.Count == 1)
             {
-                Console.WriteLine(await context.Client.HttpDelete(context.BaseURL + values[0]));
+                Console.WriteLine(await context.Client.HttpDelete(values[0].StartsWith(context.BaseURL) ? values[0] : context.BaseURL + values[0]));
             }
         }
 
