@@ -57,6 +57,7 @@ namespace Onshape.Api.ConsoleApp
 
         internal static Dictionary<string, string> commandTokens = new Dictionary<string, string> {
             {@"HELP", HELP},
+            {@"?", HELP},
             {@"/?", HELP},
             {@"--HELP", HELP},
             {@"-H", HELP},

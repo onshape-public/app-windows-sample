@@ -195,6 +195,7 @@ namespace Onshape.Api.ConsoleApp
 
                 // Authenticate as Onshape Application
                 OnshapeOAuth onshapeOAuth = new OnshapeOAuth(baseUri, clientId, clientSecret);
+                Console.WriteLine("Opening browser window for Onshape authentication...");
                 onshapeOAuth.AuthenticateBlocking();
                 oauthToken = onshapeOAuth.AccessToken;
                 oauthRefreshToken = onshapeOAuth.RefreshToken;
@@ -254,7 +255,7 @@ namespace Onshape.Api.ConsoleApp
 
             if (cmdLine != null)
             {
-                if (String.Equals(Constants.HELP, cmdLine.Command.Name))
+                if (cmdLine.Command != null && String.Equals(Constants.HELP, cmdLine.Command.Name))
                 {
                     printUsage(null, cmdLine.Options, cmdLine.Values);
                     return;
@@ -265,7 +266,10 @@ namespace Onshape.Api.ConsoleApp
                     baseExecutionContext = InitExecutionContext(cmdLine);
 
                     // Execute command
-                    await cmdLine.Command.Worker(baseExecutionContext, cmdLine.Options, cmdLine.Values);
+                    if (cmdLine.Command != null)
+                    {
+                        await cmdLine.Command.Worker(baseExecutionContext, cmdLine.Options, cmdLine.Values);
+                    }
 
                     if (baseExecutionContext.InteractiveMode)
                     {
