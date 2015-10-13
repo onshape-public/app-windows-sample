@@ -14,6 +14,7 @@ namespace Onshape.Api.Client
         public String BaseUri { get; set; }
         public String AccessToken { get; set; }
         public String RefreshToken { get; set; }
+        public String ClientId { get; set; }
 
         #region Utilities
 
@@ -132,6 +133,19 @@ namespace Onshape.Api.Client
             using (var client = ConstructHttpClient())
             {
                 HttpResponseMessage response = await client.PostAsJsonAsync(uri, value);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                throw new Exception(response.ToString());
+            }
+        }
+
+        public async Task<T> HttpPost<T>(String uri)
+        {
+            using (var client = ConstructHttpClient())
+            {
+                HttpResponseMessage response = await client.PostAsync(uri, null);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -260,6 +274,32 @@ namespace Onshape.Api.Client
         public async Task<OnshapeElement> UpdateVersionElement(String documentId, String versionId, OnshapeElement value) 
         {
             return await HttpPost<OnshapeElement>(String.Format(Constants.ELEMENT_API_URI, documentId, "v", versionId, value.id), value);
+        }
+
+        #endregion
+
+        #region Billing Account
+        
+        public async Task<OnshapePurchase> ConsumePurchase(String purchaseId)
+        {
+            return await HttpPost<OnshapePurchase>(String.Format(Constants.CONSUME_PURCHASE_API_URI, purchaseId));
+        }
+        public async Task CancelPurchase(String purchaseId)
+        {
+            await HttpDelete(String.Format(Constants.PURCHASE_API_URI, purchaseId));
+        }
+        
+        #endregion
+
+        #region Billing Plan
+
+        public async Task<List<OnshapeBillingPlan>> GetClientBillingPlans()
+        {
+            return await HttpGet<List<OnshapeBillingPlan>>(String.Format(Constants.CLIENT_BILLING_PLANS_API_URI, ClientId));
+        }
+        public async Task<OnshapeBillingPlan> GetBillingPlan(String planId)
+        {
+            return await HttpGet<OnshapeBillingPlan>(String.Format(Constants.BILLING_PLAN_API_URI, planId));
         }
 
         #endregion

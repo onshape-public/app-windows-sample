@@ -43,6 +43,10 @@ namespace Onshape.Api.ConsoleApp
         internal const string VERSIONS = @"VERSIONS";
         internal const string USERS = @"USERS";
         internal const string ELEMENTS = @"ELEMENTS";
+        internal const string PLANS = @"PLANS";
+        internal const string PURCHASE = @"PURCHASE";
+        internal const string CONSUME = @"CONSUME";
+        internal const string CANCEL = @"CANCEL";
         internal const string FILE = @"FILE";
         internal const string BASE_URI = @"BASE_URI";
         internal const string OAUTH_TOKEN = @"TOKEN";
@@ -71,7 +75,11 @@ namespace Onshape.Api.ConsoleApp
             {@"WORKSPACES", WORKSPACES},
             {@"VERSIONS", VERSIONS},
             {@"USERS", USERS},
-            {@"ELEMENTS", ELEMENTS}
+            {@"ELEMENTS", ELEMENTS},
+            {@"PLANS", PLANS},
+            {@"CANCEL", CANCEL},
+            {@"CONSUME", CONSUME},
+            {@"PURCHASE", PURCHASE},
         };
 
         internal static Dictionary<string, string> optionTokens = new Dictionary<string, string> {

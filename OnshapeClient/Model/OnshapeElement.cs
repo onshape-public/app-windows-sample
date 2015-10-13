@@ -8,14 +8,14 @@ namespace Onshape.Api.Client.Model
 {
     public class OnshapeElement
     {
-        public String microversionId { get; set; }
-        public String dataType { get; set; }
-        public String elementType { get; set; }
-        public String lengthUnits { get; set; }
-        public String angleUnits { get; set; }
-        public String id { get; set; }
-        public String name { get; set; }
-        public String foreignDataId { get; set; }
-        public String filename { get; set; }
+        public string microversionId { get; set; }
+        public string dataType { get; set; }
+        public string elementType { get; set; }
+        public string lengthUnits { get; set; }
+        public string angleUnits { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
+        public string foreignDataId { get; set; }
+        public string filename { get; set; }
     }
 }

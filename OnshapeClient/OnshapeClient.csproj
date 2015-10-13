@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Model\OnshapePurchase.cs" />
+    <Compile Include="Model\OnshapeBillingPlan.cs" />
+    <Compile Include="Model\OnshapeBillingPlanType.cs" />
     <Compile Include="Model\OnshapeDocument.cs" />
     <Compile Include="Model\OnshapeDocumentFilterType.cs" />
     <Compile Include="Model\OnshapeDocumentOwnerType.cs" />

@@ -202,7 +202,7 @@ namespace Onshape.Api.ConsoleApp
             }
 
             // Initialize Onshape client
-            OnshapeClient client = new OnshapeClient { AccessToken = oauthToken, RefreshToken = oauthRefreshToken, BaseUri = baseUri };
+            OnshapeClient client = new OnshapeClient { AccessToken = oauthToken, RefreshToken = oauthRefreshToken, BaseUri = baseUri, ClientId = clientId };
 
             // Construct command execution context
             return new CommandExecutionContext { BaseURL = baseUri, InteractiveMode = interactiveMode, OAuthToken = oauthToken, OAuthRefreshToken = oauthRefreshToken, Client = client };
@@ -241,6 +241,9 @@ namespace Onshape.Api.ConsoleApp
 
         private static async Task RunAsync(string[] args)
         {
+            // Init console window size
+            Console.WindowWidth = 98;
+
             // Parse command line
             ParsedCommandLine cmdLine = null;
             try

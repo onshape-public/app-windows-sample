@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Onshape.Api.Client.Model;
+using Onshape.Api.ConsoleApp.CommandImpl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,26 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Reqiuired = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}},
                     new CommandOption {Reqiuired = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                 }}},
+            {@"GET_PLANS", new Command {
+                Description = @"Get plans: 'onshapeConsoleApp GET plans [<planId>]'",
+                Worker = BillingCommands.GetPlans,
+                Options = new List<CommandOption> { 
+                }}},
+            {@"CONSUME_PURCHASE", new Command {
+                Description = @"Consume purchase: 'onshapeConsoleApp consume purchase <purchaseId>'",
+                Worker = BillingCommands.ConsumePurchase,
+                Options = new List<CommandOption> { 
+                }}},
+            {@"CANCEL_PURCHASE", new Command {
+                Description = @"Cancel purchase: 'onshapeConsoleApp cancel purchase <purchaseId>'",
+                Worker = BillingCommands.CancelPurchase,
+                Options = new List<CommandOption> { 
+                }}},
+            {@"PURCHASE", new Command {
+                Description = @"Purchase: 'onshapeConsoleApp purchase <sku>'",
+                Worker = BillingCommands.Purchase,
+                Options = new List<CommandOption> { 
+                }}},
             {@"HELP", new Command {
                 Name = @"HELP",
                 Description = @"Get help: 'onshapeConsoleApp -h [topic]'",
@@ -162,7 +183,7 @@ namespace Onshape.Api.ConsoleApp
             else 
             {
                 List<OnshapeDocument> documents = await context.Client.GetDocuments();
-                Console.WriteLine(JsonConvert.SerializeObject(documents));
+                documents.PrintDocuments();
             }
         }
 
