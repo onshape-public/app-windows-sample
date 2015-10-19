@@ -53,6 +53,7 @@
     <Compile Include="Model\OnshapeDocumentOwnerType.cs" />
     <Compile Include="Model\OnshapeDocuments.cs" />
     <Compile Include="Model\OnshapeElement.cs" />
+    <Compile Include="Model\OnshapePurchaseStateType.cs" />
     <Compile Include="Model\OnshapeSortOrder.cs" />
     <Compile Include="Model\OnshapeThumbnail.cs" />
     <Compile Include="Model\OnshapeThumbnails.cs" />

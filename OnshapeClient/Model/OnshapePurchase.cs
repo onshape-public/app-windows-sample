@@ -19,7 +19,7 @@ namespace Onshape.Api.Client.Model
         public string group { get; set; }
         public string applicationId { get; set; }
         public string clientId { get; set; }
-        public int state { get; set; }
+        public OnshapePurchaseStateType state { get; set; }
         public Nullable<DateTime> canceledAt { get; set; }
         public Nullable<DateTime> subscriptionEndAt { get; set; }
         public string currency { get; set; }

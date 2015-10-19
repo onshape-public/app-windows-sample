@@ -1,6 +1,7 @@
 ﻿using Onshape.Api.Client.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,6 +16,7 @@ namespace Onshape.Api.Client
         public String AccessToken { get; set; }
         public String RefreshToken { get; set; }
         public String ClientId { get; set; }
+        public Action<HttpResponseMessage> OnResponse { get; set; }
 
         #region Utilities
 
@@ -91,6 +93,10 @@ namespace Onshape.Api.Client
             using (var client = ConstructHttpClient())
             {
                 HttpResponseMessage response = await client.GetAsync(uri);
+                if (OnResponse != null)
+                {
+                    OnResponse(response);
+                }
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -103,7 +109,12 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                return await client.PostAsJsonAsync(uri, value);
+                HttpResponseMessage response = await client.PostAsJsonAsync(uri, value);
+                if (OnResponse != null)
+                {
+                    OnResponse(response);
+                }
+                return response;
             }
         }
 
@@ -123,7 +134,12 @@ namespace Onshape.Api.Client
                     var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes(fileName));
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue ("form-data") { FileName = System.IO.Path.GetFileName(fileName) };
                     content.Add(fileContent);
-                    return await client.PostAsync(uri, content);
+                    HttpResponseMessage response = await client.PostAsync(uri, content);
+                    if (OnResponse != null)
+                    {
+                        OnResponse(response);
+                    }
+                    return response;
                 }
             }
         }
@@ -133,6 +149,10 @@ namespace Onshape.Api.Client
             using (var client = ConstructHttpClient())
             {
                 HttpResponseMessage response = await client.PostAsJsonAsync(uri, value);
+                if (OnResponse != null)
+                {
+                    OnResponse(response);
+                }
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -146,6 +166,10 @@ namespace Onshape.Api.Client
             using (var client = ConstructHttpClient())
             {
                 HttpResponseMessage response = await client.PostAsync(uri, null);
+                if (OnResponse != null)
+                {
+                    OnResponse(response);
+                }
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -158,7 +182,12 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                return await client.DeleteAsync(uri);
+                HttpResponseMessage response = await client.DeleteAsync(uri);
+                if (OnResponse != null)
+                {
+                    OnResponse(response);
+                }
+                return response;
             }
         }
 
@@ -227,7 +256,7 @@ namespace Onshape.Api.Client
         {
             return await HttpGet<List<OnshapeWorkspace>>(String.Format(Constants.WORKSPACES_API_URI, documentId));
         }
-        public async Task<OnshapeWorkspace> GetWorkspace (String documentId, String workspaceId) 
+        public async Task<OnshapeWorkspace> GetWorkspace(String documentId, String workspaceId) 
         {
             return await HttpGet<OnshapeWorkspace>(String.Format(Constants.WORKSPACE_API_URI, documentId, workspaceId));
         }
@@ -278,8 +307,36 @@ namespace Onshape.Api.Client
 
         #endregion
 
+        #region Partstudios
+
+        public async Task<Stream> DownloadPartstudio(String documentId, String wmvSelector, String selectorId, String elementId, String format)
+        {
+            Stream result = null;
+            var response = await HttpGet(String.Format(Constants.DOWNLOAD_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, format));
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                //TODO: Replace this with a generic retry logic
+                response = await HttpGet(response.RequestMessage.RequestUri.ToString());
+            }
+            if (OnResponse != null)
+            {
+                OnResponse(response);
+            }
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+
+        #endregion
+
         #region Billing Account
-        
+
+        public async Task<List<OnshapePurchase>> GetPurchases()
+        {
+            return await HttpGet<List<OnshapePurchase>>(String.Format(Constants.PURCHASES_API_URI));
+        }
         public async Task<OnshapePurchase> ConsumePurchase(String purchaseId)
         {
             return await HttpPost<OnshapePurchase>(String.Format(Constants.CONSUME_PURCHASE_API_URI, purchaseId));

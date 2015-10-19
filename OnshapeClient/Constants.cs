@@ -24,7 +24,10 @@ namespace Onshape.Api.Client
 
         public const string USER_API_URI = @"/api/users/{0}";
 
-        public const string PURCHASE_API_URI = @"/api/accounts/purchasses/{0}";
+        public const string DOWNLOAD_PARTSTUDIO_API_URI = @"/api/partstudios/d/{0}/{1}/{2}/e/{3}/{4}";
+
+        public const string PURCHASES_API_URI = @"/api/accounts/purchases";
+        public const string PURCHASE_API_URI = @"/api/accounts/purchases/{0}";
         public const string CONSUME_PURCHASE_API_URI = @"/api/accounts/purchasses/{0}/consume";
         public const string BILLING_PLAN_API_URI = @"/api/billing/plans/{0}";
         public const string CLIENT_BILLING_PLANS_API_URI = @"/api/billing/plans/client/{0}";

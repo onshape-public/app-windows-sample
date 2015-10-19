@@ -58,25 +58,38 @@ namespace Onshape.Api.ConsoleApp
         public static void PrintAsTable(this Dictionary<String, String> map)
         {
             if (map != null)
-            map.Select((e) => new string[] { e.Key, e.Value }).PrintAsTable(
-                    new double[] { 0.25, 0.75 },
+            map.Select((e) => new object[] { e.Key, e.Value }).PrintAsTable(
+                    new int[] { 25, 10 },
+                    new int[] { 25, 120 },
                     new string[] { "", "" },
                     new string[] { "Name", "Value" }
                     );
         }
 
-        public static void PrintAsTable (this IEnumerable<string[]> rows, double[] columnWidth, string[] rowFormat, string[] headers) {
-            int columnCount = columnWidth.Length;
+        public static void PrintAsTable(this IEnumerable<object[]> rows, int[] columnWidthMin, int[] columnWidthMax, string[] rowFormat, string[] headers)
+        {
+            int columnCount = columnWidthMin.Length;
             string[] paddedHeaders = new string[columnCount];
             int[] adjustedColumnWidth = new int[columnCount];
-            string[] paddedRow = new string[columnCount];
-            int totalWidth = Console.WindowWidth - columnCount - 1;
+            double[] columnWidthRelativeVariability = new double[columnCount];
+            object[] paddedRow = new object[columnCount];
+            int totalAvailableWidth = Console.WindowWidth - columnCount - 1;
+            double totalColumnWidthRelativeVariability = 0.0;
+            int totalRequiredWidthMin = 0;
+            for (int i = 0; i< columnCount; ++i)
+            {
+                columnWidthRelativeVariability[i] = (Math.Abs(columnWidthMax[i]) - Math.Abs(columnWidthMin[i])) / (double)columnWidthMin[i];
+                totalColumnWidthRelativeVariability += Math.Abs(columnWidthRelativeVariability[i]);
+                totalRequiredWidthMin += Math.Abs(columnWidthMin[i]);
+            }
+            int totalDynamicWidth = totalAvailableWidth - totalRequiredWidthMin;
             StringBuilder headerFormatBuilder = new StringBuilder();
             StringBuilder rowFormatBuilder = new StringBuilder();
-            for (int i = 0; i < columnWidth.Length; ++i)
+            for (int i = 0; i < columnCount; ++i)
             {
-                adjustedColumnWidth[i] = (int)(columnWidth[i] * totalWidth);
-                if (i > 0) 
+                double adjustmentRatio = (totalDynamicWidth > 0) ? columnWidthRelativeVariability[i] / totalColumnWidthRelativeVariability : columnWidthMin[i] / totalRequiredWidthMin;
+                adjustedColumnWidth[i] = (int)(columnWidthMin[i] + adjustmentRatio * totalDynamicWidth);
+                if (i > 0)
                 {
                     headerFormatBuilder.Append(' ');
                     rowFormatBuilder.Append(' ');
@@ -94,35 +107,53 @@ namespace Onshape.Api.ConsoleApp
             }
             Console.WriteLine(headerFormatBuilder.ToString(), paddedHeaders);
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            foreach(var row in rows) {
+            foreach (var row in rows)
+            {
                 for (int i = 0; i < row.Length; ++i)
                 {
-                    paddedRow[i] = row[i].Shorten(adjustedColumnWidth[i]);
+                    paddedRow[i] = row[i];
+                    if (String.IsNullOrEmpty(rowFormat[i])) {
+                        // TODO: need to be smarted here 
+                        paddedRow[i] = row[i].ToString().Shorten(adjustedColumnWidth[i]);
+                    }
                 }
                 Console.WriteLine(rowFormatBuilder.ToString(), paddedRow);
             }
             Console.ResetColor();
         }
-        
+
         #endregion
 
-        public static void PrintPlans(this List<OnshapeBillingPlan> plans)
+        public static void Print(this List<OnshapePurchase> purchases)
+        {
+            if (purchases != null && purchases.Count > 0)
+                purchases.Select((p) => new object[] { p.planName, p.id, p.planType.ToString(), p.state.ToString(), p.amountCents / 100.0, p.subscriptionEndAt.ToString() }).PrintAsTable(
+                    new int[] { -12, 26, 10, 10, 10, 24 },
+                    new int[] { -30, 26, 10, 15, 15, 50 },
+                    new string[] { "", "", "", "", "C2", "" },
+                    new string[] { "Name", "Id", "Type", "State", "Amount", "Subscription End Date" }
+                    );
+        }
+
+        public static void Print(this List<OnshapeBillingPlan> plans)
         {
             if (plans != null && plans.Count > 0) 
-            plans.Select((p) => new string[] { p.name, p.id, p.planType.ToString(), (p.amountCents / 100.0).ToString() }).PrintAsTable(
-                new double[] { -0.35, 0.35, 0.15, 0.15 },
-                new string[] { "", "", "", "N2" },
-                new string[] { "Name", "Id", "Type", "Amount" }
+            plans.Select((p) => new object[] { p.name, p.id, p.description, p.planType.ToString(), p.amountCents / 100.0 }).PrintAsTable(
+                new int[] { -15, 26, -26, 15, 10 },
+                new int[] { -30, 30, -32, 20, 12 },
+                new string[] { "", "", "", "", "C2" },
+                new string[] { "Name", "Id", "Description", "Type", "Amount" }
                 );
         }
 
-        public static void PrintDocuments(this List<OnshapeDocument> documents)
+        public static void Print(this List<OnshapeDocument> documents)
         {
             if (documents != null && documents.Count > 0) 
-            documents.Select((d) => new string[] {d.name, d.id, d.permission, d.sizeBytes.ToString()}).PrintAsTable(
-                new double[] { -0.35, 0.3, 0.15, 0.15},
-                new string[] { "", "", "", ""},
-                new string[] { "Name", "Id", "Permissions", "Size(bytes)"}
+            documents.Select((d) => new object[] {d.name, d.createdAt.ToString(),  d.id, d.permission, d.sizeBytes}).PrintAsTable(
+                new int[] { -15, 26, 25, 12, 15},
+                new int[] { -21, 31, 31, 15, 20 },
+                new string[] { "", "", "", "", "" },
+                new string[] { "Name", "Created At", "Id", "Permissions", "Size(bytes)" }
                 );
         }
     }

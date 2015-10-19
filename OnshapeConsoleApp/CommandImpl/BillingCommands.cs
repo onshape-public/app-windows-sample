@@ -26,8 +26,14 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
             else
             {
                 List<OnshapeBillingPlan> plans = await context.Client.GetClientBillingPlans();
-                plans.PrintPlans();
+                plans.Print();
             }
+        }
+
+        internal static async Task GetPurchases(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
+        {
+            List<OnshapePurchase> purchases = await context.Client.GetPurchases();
+            purchases.Print();
         }
 
         internal static async Task CancelPurchase(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
@@ -63,9 +69,13 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
                     HttpUtility.UrlEncode(context.Client.ClientId),
                     HttpUtility.UrlEncode(values[0]));
                 HttpListenerRequest result = await Utils.ExecuteBrowserWorkflow(purchaseWorkflowUri, "Please, close this window.", PURCHASE_WORKFLOW_CALLBACK, PURCHASE_WORKFLOW_TIMEOUT);
-                if (Boolean.Parse(result.QueryString["success"]))
+                if (result != null && Boolean.Parse(result.QueryString["success"]))
                 {
                     Console.WriteLine("Purchase succedded.");
+                }
+                else
+                {
+                    Console.WriteLine("Purchase failed.");
                 }
             }
             else

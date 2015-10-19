@@ -12,6 +12,7 @@ namespace Onshape.Api.ConsoleApp
         public string Name { get; set; }
         public List<CommandOption> Options { get; set; }
         public string Description { get; set; }
+        public List<string> Examples { get; set; }
         public DoWork Worker { get; set; }
         public int MinArgs { get; set; }
         public int MaxArgs { get; set; }

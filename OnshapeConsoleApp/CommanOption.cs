@@ -9,6 +9,7 @@ namespace Onshape.Api.ConsoleApp
     internal class CommandOption
     {
         public HashSet<String> MutuallyExclusive { get; set; }
+        public String Description { get; set; }
         public Boolean Reqiuired { get; set; }
         public string Token { get; set; }
         public int MinArgs { get; set; }

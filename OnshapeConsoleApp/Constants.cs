@@ -12,6 +12,7 @@ namespace Onshape.Api.ConsoleApp
 
         internal const string DEFAULT_LOGING_LEVEL = "Info";
         internal const string INTERACTIVE_PROMPT = "> ";
+        internal const int MAX_FILE_LENGTH_TO_PRINT_OUT = 65536;
 
         #endregion
 
@@ -43,8 +44,11 @@ namespace Onshape.Api.ConsoleApp
         internal const string VERSIONS = @"VERSIONS";
         internal const string USERS = @"USERS";
         internal const string ELEMENTS = @"ELEMENTS";
+        internal const string PARTSTUDIO = @"PARTSTUDIO";
+        internal const string DOWNLOAD = @"DOWNLOAD";
         internal const string PLANS = @"PLANS";
         internal const string PURCHASE = @"PURCHASE";
+        internal const string PURCHASES = @"PURCHASES";
         internal const string CONSUME = @"CONSUME";
         internal const string CANCEL = @"CANCEL";
         internal const string FILE = @"FILE";
@@ -53,6 +57,7 @@ namespace Onshape.Api.ConsoleApp
         internal const string OAUTH_REFRESH_TOKEN = @"REFRESH_TOKEN";
         internal const string LOGING_LEVEL = @"LOGING_LEVEL";
         internal const string INTERACTIVE_MODE = @"INTERACTIVE_MODE";
+        internal const string OUTPUT_FORMAT = @"OUTPUT_FORMAT";
         internal const string EXIT = @"EXIT";
 
         #endregion
@@ -65,20 +70,28 @@ namespace Onshape.Api.ConsoleApp
             {@"/?", HELP},
             {@"--HELP", HELP},
             {@"-H", HELP},
+            {@"H", HELP},
             {@"EXIT", EXIT},
             {@"Q", EXIT},
             {@"UPLOAD", UPLOAD},
+            {@"U", UPLOAD},
             {@"GET", GET},
+            {@"G", GET},
             {@"POST", POST},
+            {@"P", POST},
             {@"DELETE", DELETE},
+            {@"D", DELETE},
             {@"DOCUMENTS", DOCUMENTS},
             {@"WORKSPACES", WORKSPACES},
             {@"VERSIONS", VERSIONS},
             {@"USERS", USERS},
             {@"ELEMENTS", ELEMENTS},
+            {@"PARTSTUDIO", PARTSTUDIO},
+            {@"DOWNLOAD", DOWNLOAD},
             {@"PLANS", PLANS},
             {@"CANCEL", CANCEL},
             {@"CONSUME", CONSUME},
+            {@"PURCHASES", PURCHASES},
             {@"PURCHASE", PURCHASE},
         };
 
@@ -101,6 +114,9 @@ namespace Onshape.Api.ConsoleApp
             {@"-i", INTERACTIVE_MODE},
             {@"-l", LOGING_LEVEL},
             {@"-f", FILE},
+            {@"-outputFormat", OUTPUT_FORMAT},
+            {@"-o", OUTPUT_FORMAT},
+
         };
 
         internal static List<CommandOption> globalOptions = new List<CommandOption>
@@ -108,7 +124,8 @@ namespace Onshape.Api.ConsoleApp
             new CommandOption {Reqiuired = false, Token = Constants.BASE_URI, MinArgs = 1, MaxArgs = 1},
             new CommandOption {Reqiuired = false, Token = Constants.OAUTH_TOKEN, MinArgs = 1, MaxArgs = 1},
             new CommandOption {Reqiuired = false, Token = Constants.OAUTH_REFRESH_TOKEN, MinArgs = 1, MaxArgs = 1},
-            new CommandOption {Reqiuired = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 0}
+            new CommandOption {Reqiuired = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1},
+            new CommandOption {Reqiuired = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1}
         };
 
         #endregion
