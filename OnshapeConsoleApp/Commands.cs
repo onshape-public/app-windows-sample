@@ -76,16 +76,6 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
                     new CommandOption {Reqiuired = false, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"}
                 }}},
-            {@"DELETE_WORKSPACES", new Command {
-                Description = @"Delete existing workspace",
-                Worker = GetWorkspaces,
-                Examples = new List<string> {
-                    @"delete workspaces -d <did> -w <wid>"
-                },
-                Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"}
-                }}},
             {@"GET_VERSIONS", new Command {
                 Description = @"Get versions: 'onshapeConsoleApp GET versions -d <did> [-v <vid>]'",
                 Worker = GetVersions,
@@ -96,17 +86,6 @@ namespace Onshape.Api.ConsoleApp
                 Options = new List<CommandOption> { 
                     new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
                     new CommandOption {Reqiuired = false, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1}
-                }}},
-            {@"DELETE_VERSIONS", new Command {
-                Description = @"Delete existing version: 'onshapeConsoleApp DELETE versions -d <did> -v <vid>'",
-                Worker = DeleteVersion,
-                Examples = new List<string> {
-                    @"delete versions -d <did> -v <vid>",
-                    @"d versions -d <did> -v <vid>"
-                },
-                Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, Description = "version id"}
                 }}},
             {@"GET_USERS", new Command {
                 Description = @"Get user: 'onshapeConsoleApp GET users -u <uid>'",

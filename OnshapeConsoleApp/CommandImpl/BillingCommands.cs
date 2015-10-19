@@ -12,7 +12,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
 {
     internal static class BillingCommands
     {
-        internal const int PURCHASE_WORKFLOW_TIMEOUT = 30000;
+        internal const int PURCHASE_WORKFLOW_TIMEOUT = 60000; // 60 seconds
         internal const string PURCHASE_WORKFLOW_CALLBACK = @"http://localhost:9326";
         internal const string PURCHASE_WORKFLOW_URI_TEMPLATE = @"{0}/billing/purchase?redirectUri={1}&clientId={2}&sku={3}";
 
