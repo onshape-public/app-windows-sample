@@ -8,7 +8,7 @@ namespace Onshape.Api.Client
 {
     public static class Extensions
     {
-        public static StringBuilder AppendQueryParam<T>(this System.Text.StringBuilder stringBuilder, String name, T value)
+        public static StringBuilder AppendQueryParam<T>(this System.Text.StringBuilder stringBuilder, string name, T value)
         {
             if (stringBuilder.Length > 0)
             {

@@ -8,7 +8,7 @@ namespace Onshape.Api.Client.Model
 {
     public class OnshapeThumbnails
     {
-        public String href { get; set; }
+        public string href { get; set; }
         public List<OnshapeThumbnail> sizes { get; set; }
     }
 }

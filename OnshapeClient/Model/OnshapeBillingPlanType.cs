@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Onshape.Api.Client.Model
 {
-    public class OnshapeDocuments
+    public enum OnshapeBillingPlanType
     {
-        public string href { get; set; }
-        public List<OnshapeDocument> items { get; set; }
+        RECURRING = 0,
+        CONSUMABLE,
+        ONE_TIME
     }
 }

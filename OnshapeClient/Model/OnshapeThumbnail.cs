@@ -8,8 +8,8 @@ namespace Onshape.Api.Client.Model
 {
     public class OnshapeThumbnail
     {
-        public String href { get; set; }
-        public String mediaType { get; set; }
-        public String size { get; set; }
+        public string href { get; set; }
+        public string mediaType { get; set; }
+        public string size { get; set; }
     }
 }

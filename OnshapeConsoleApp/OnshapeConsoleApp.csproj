@@ -56,15 +56,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandExecutionContext.cs" />
+    <Compile Include="CommandImpl\BillingCommands.cs" />
     <Compile Include="CommandLineParseException.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommanOption.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="OnshapeOAuth.cs" />
     <Compile Include="ParsedCommandLine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

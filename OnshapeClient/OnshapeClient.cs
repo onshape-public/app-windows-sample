@@ -1,10 +1,13 @@
 ﻿using Onshape.Api.Client.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Onshape.Api.Client
@@ -14,6 +17,8 @@ namespace Onshape.Api.Client
         public String BaseUri { get; set; }
         public String AccessToken { get; set; }
         public String RefreshToken { get; set; }
+        public String ClientId { get; set; }
+        public String ClientSecret { get; set; }
 
         #region Utilities
 
@@ -67,21 +72,139 @@ namespace Onshape.Api.Client
 
         #region Http utilities
 
-        private HttpClient ConstructHttpClient()
+        private void InitDefaultHeaders(HttpClient client)
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(BaseUri);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Remove("Authorization");
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AccessToken);
+        }
+
+        private class OnshapeRefreshTokenResponse
+        {
+            public string access_token { get; set; }
+            public string token_type { get; set; }
+            public string refresh_token { get; set; }
+            public int expires_in { get; set; }
+            public string scope { get; set; }
+        }
+
+        private async void RefreshOAuthTokens(HttpClient client)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, String.Format(Constants.TOKEN_URI_TEMPLATE, BaseUri));
+            request.Content = new FormUrlEncodedContent(new Dictionary<String, String>() {
+                    {"grant_type", "refresh_token"},
+                    {"refresh_token", RefreshToken},
+                    {"client_id", ClientId},
+                    {"client_secret", ClientSecret}
+                });
+            HttpResponseMessage response = null;
+            try
+            {
+                using (response = await client.SendAsync(request))
+                {
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        OnshapeRefreshTokenResponse refreshToken = await response.Content.ReadAsAsync<OnshapeRefreshTokenResponse>();
+                        AccessToken = refreshToken.access_token;
+                        RefreshToken = refreshToken.refresh_token;
+                        InitDefaultHeaders(client);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new OnshapeClientException("Authorization token refresh failed", e);
+            }
+        }
+
+        private class RedirectMessageHandler : DelegatingHandler
+        {
+            public RedirectMessageHandler(HttpMessageHandler innerHandler) : base(innerHandler) { }
+
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                var tcs = new TaskCompletionSource<HttpResponseMessage>();
+                base.SendAsync(request, cancellationToken)
+                    .ContinueWith(t =>
+                    {
+                        HttpResponseMessage response;
+                        try
+                        {
+                            response = t.Result;
+                        }
+                        catch (Exception e)
+                        {
+                            response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
+                            response.ReasonPhrase = e.Message;
+                        }
+                        if (response.StatusCode == HttpStatusCode.MovedPermanently
+                            || response.StatusCode == HttpStatusCode.Moved
+                            || response.StatusCode == HttpStatusCode.Redirect
+                            || response.StatusCode == HttpStatusCode.Found
+                            || response.StatusCode == HttpStatusCode.SeeOther
+                            || response.StatusCode == HttpStatusCode.RedirectKeepVerb
+                            || response.StatusCode == HttpStatusCode.TemporaryRedirect
+                            || (int)response.StatusCode == 308)
+                        {
+                            var newRequest = new HttpRequestMessage(response.RequestMessage.Method, response.RequestMessage.RequestUri);
+                            foreach (var header in response.RequestMessage.Headers)
+                            {
+                                newRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                            }
+                            foreach (var property in response.RequestMessage.Properties)
+                            {
+                                newRequest.Properties.Add(property);
+                            }
+                            if (response.RequestMessage.Content != null)
+                            {
+                                newRequest.Content = new StreamContent(response.RequestMessage.Content.ReadAsStreamAsync().Result);
+                            }
+                            if (response.StatusCode == HttpStatusCode.Redirect
+                                || response.StatusCode == HttpStatusCode.Found
+                                || response.StatusCode == HttpStatusCode.SeeOther)
+                            {
+                                newRequest.Content = null;
+                                newRequest.Method = HttpMethod.Get;
+                            }
+                            newRequest.RequestUri = response.Headers.Location;
+                            base.SendAsync(newRequest, cancellationToken)
+                                .ContinueWith(t2 => tcs.SetResult(t2.Result));
+                        }
+                        else
+                        {
+                            tcs.SetResult(response);
+                        }
+                    });
+                return tcs.Task;
+            }
+        }
+
+        private HttpClient ConstructHttpClient()
+        {
+            var handler = new RedirectMessageHandler(new HttpClientHandler() { AllowAutoRedirect = false });
+            HttpClient client = new HttpClient(handler);
+            client.BaseAddress = new Uri(BaseUri);
+            InitDefaultHeaders(client);
             return client;
+        }
+
+        private async Task<T> doWithTokenRefresh<T> (HttpClient client, Func<Task<T>> operation) where T : HttpResponseMessage {
+            var response = await operation();
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // Refresh token and retry
+                RefreshOAuthTokens(client);
+                response = await operation();
+            }
+            return response;
         }
 
         public async Task<HttpResponseMessage> HttpGet(String uri)
         {
             using (var client = ConstructHttpClient())
             {
-                return await client.GetAsync(uri);
+                return await doWithTokenRefresh(client, ()=>client.GetAsync(uri));
             }
         }
 
@@ -89,7 +212,7 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(uri);
+                HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.GetAsync(uri));
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -102,7 +225,7 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                return await client.PostAsJsonAsync(uri, value);
+                return await doWithTokenRefresh(client, () => client.PostAsJsonAsync(uri, value));
             }
         }
 
@@ -122,7 +245,8 @@ namespace Onshape.Api.Client
                     var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes(fileName));
                     fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue ("form-data") { FileName = System.IO.Path.GetFileName(fileName) };
                     content.Add(fileContent);
-                    return await client.PostAsync(uri, content);
+                    HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.PostAsync(uri, content));
+                    return response;
                 }
             }
         }
@@ -131,7 +255,20 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                HttpResponseMessage response = await client.PostAsJsonAsync(uri, value);
+                HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.PostAsJsonAsync(uri, value));
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+                throw new Exception(response.ToString());
+            }
+        }
+
+        public async Task<T> HttpPost<T>(String uri)
+        {
+            using (var client = ConstructHttpClient())
+            {
+                HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.PostAsync(uri, null));
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
@@ -144,7 +281,8 @@ namespace Onshape.Api.Client
         {
             using (var client = ConstructHttpClient())
             {
-                return await client.DeleteAsync(uri);
+                HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.DeleteAsync(uri));
+                return response;
             }
         }
 
@@ -213,7 +351,7 @@ namespace Onshape.Api.Client
         {
             return await HttpGet<List<OnshapeWorkspace>>(String.Format(Constants.WORKSPACES_API_URI, documentId));
         }
-        public async Task<OnshapeWorkspace> GetWorkspace (String documentId, String workspaceId) 
+        public async Task<OnshapeWorkspace> GetWorkspace(String documentId, String workspaceId) 
         {
             return await HttpGet<OnshapeWorkspace>(String.Format(Constants.WORKSPACE_API_URI, documentId, workspaceId));
         }
@@ -260,6 +398,51 @@ namespace Onshape.Api.Client
         public async Task<OnshapeElement> UpdateVersionElement(String documentId, String versionId, OnshapeElement value) 
         {
             return await HttpPost<OnshapeElement>(String.Format(Constants.ELEMENT_API_URI, documentId, "v", versionId, value.id), value);
+        }
+
+        #endregion
+
+        #region Partstudios
+
+        public async Task<Stream> DownloadPartstudio(String documentId, String wmvSelector, String selectorId, String elementId, String format)
+        {
+            Stream result = null;
+            var response = await HttpGet(String.Format(Constants.DOWNLOAD_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, format));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region Billing Account
+
+        public async Task<List<OnshapePurchase>> GetPurchases()
+        {
+            return await HttpGet<List<OnshapePurchase>>(String.Format(Constants.PURCHASES_API_URI));
+        }
+        public async Task<OnshapePurchase> ConsumePurchase(String purchaseId)
+        {
+            return await HttpPost<OnshapePurchase>(String.Format(Constants.CONSUME_PURCHASE_API_URI, purchaseId));
+        }
+        public async Task CancelPurchase(String purchaseId)
+        {
+            await HttpDelete(String.Format(Constants.PURCHASE_API_URI, purchaseId));
+        }
+        
+        #endregion
+
+        #region Billing Plan
+
+        public async Task<List<OnshapeBillingPlan>> GetClientBillingPlans()
+        {
+            return await HttpGet<List<OnshapeBillingPlan>>(String.Format(Constants.CLIENT_BILLING_PLANS_API_URI, ClientId));
+        }
+        public async Task<OnshapeBillingPlan> GetBillingPlan(String planId)
+        {
+            return await HttpGet<OnshapeBillingPlan>(String.Format(Constants.BILLING_PLAN_API_URI, planId));
         }
 
         #endregion

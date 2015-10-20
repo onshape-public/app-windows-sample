@@ -8,21 +8,36 @@ namespace Onshape.Api.Client
 {
     internal static class Constants
     {
+        #region OAuth
+
+        internal const string AUTH_FORM_TEMPLATE = "code={0}&client_id={1}&client_secret={2}&grant_type=authorization_code&redirect_uri={3}";
+        internal const string TOKEN_URI_TEMPLATE = @"{0}/oauth/token";
+
+        #endregion
+
         #region Onshape REST API URIs
- 
-        public const String DOCUMENTS_API_URI = @"/api/documents";
-        public const String DOCUMENT_API_URI = @"/api/documents/{0}";
 
-        public const String WORKSPACES_API_URI = @"/api/documents/d/{0}/workspaces";
-        public const String WORKSPACE_API_URI = @"/api/documents/d/{0}/workspaces/{1}";
+        public const string DOCUMENTS_API_URI = @"/api/documents";
+        public const string DOCUMENT_API_URI = @"/api/documents/{0}";
 
-        public const String VERSIONS_API_URI = @"/api/documents/d/{0}/versions";
-        public const String VERSION_API_URI = @"/api/documents/d/{0}/versions/{1}";
+        public const string WORKSPACES_API_URI = @"/api/documents/d/{0}/workspaces";
+        public const string WORKSPACE_API_URI = @"/api/documents/d/{0}/workspaces/{1}";
 
-        public const String ELEMENTS_API_URI = @"/api/documents/d/{0}/{1}/{2}/elements";
-        public const String ELEMENT_API_URI = @"/api/documents/d/{0}/{1}/{2}/elements?elementId={3}";
+        public const string VERSIONS_API_URI = @"/api/documents/d/{0}/versions";
+        public const string VERSION_API_URI = @"/api/documents/d/{0}/versions/{1}";
 
-        public const String USER_API_URI = @"/api/users/{0}";
+        public const string ELEMENTS_API_URI = @"/api/documents/d/{0}/{1}/{2}/elements";
+        public const string ELEMENT_API_URI = @"/api/documents/d/{0}/{1}/{2}/elements?elementId={3}";
+
+        public const string USER_API_URI = @"/api/users/{0}";
+
+        public const string DOWNLOAD_PARTSTUDIO_API_URI = @"/api/partstudios/d/{0}/{1}/{2}/e/{3}/{4}";
+
+        public const string PURCHASES_API_URI = @"/api/accounts/purchases";
+        public const string PURCHASE_API_URI = @"/api/accounts/purchases/{0}";
+        public const string CONSUME_PURCHASE_API_URI = @"/api/accounts/purchases/{0}/consume";
+        public const string BILLING_PLAN_API_URI = @"/api/billing/plans/{0}";
+        public const string CLIENT_BILLING_PLANS_API_URI = @"/api/billing/plans/client/{0}";
 
         #endregion
 
