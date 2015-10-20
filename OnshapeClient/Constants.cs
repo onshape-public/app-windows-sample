@@ -8,8 +8,15 @@ namespace Onshape.Api.Client
 {
     internal static class Constants
     {
+        #region OAuth
+
+        internal const string AUTH_FORM_TEMPLATE = "code={0}&client_id={1}&client_secret={2}&grant_type=authorization_code&redirect_uri={3}";
+        internal const string TOKEN_URI_TEMPLATE = @"{0}/oauth/token";
+
+        #endregion
+
         #region Onshape REST API URIs
- 
+
         public const string DOCUMENTS_API_URI = @"/api/documents";
         public const string DOCUMENT_API_URI = @"/api/documents/{0}";
 
@@ -28,7 +35,7 @@ namespace Onshape.Api.Client
 
         public const string PURCHASES_API_URI = @"/api/accounts/purchases";
         public const string PURCHASE_API_URI = @"/api/accounts/purchases/{0}";
-        public const string CONSUME_PURCHASE_API_URI = @"/api/accounts/purchasses/{0}/consume";
+        public const string CONSUME_PURCHASE_API_URI = @"/api/accounts/purchases/{0}/consume";
         public const string BILLING_PLAN_API_URI = @"/api/billing/plans/{0}";
         public const string CLIENT_BILLING_PLANS_API_URI = @"/api/billing/plans/client/{0}";
 

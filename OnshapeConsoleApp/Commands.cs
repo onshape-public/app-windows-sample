@@ -53,7 +53,7 @@ namespace Onshape.Api.ConsoleApp
                     @"g documents 8b803ff47462494dafecc822"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = false, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "Document Id"}
+                    new CommandOption {Required = false, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "Document Id"}
                 }}},
             {@"POST_DOCUMENTS", new Command { 
                 Description = @"Create a new document",
@@ -73,19 +73,19 @@ namespace Onshape.Api.ConsoleApp
                     @"get workspaces -d <did> [-w <wid>]"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = false, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"}
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = false, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"}
                 }}},
             {@"GET_VERSIONS", new Command {
                 Description = @"Get versions: 'onshapeConsoleApp GET versions -d <did> [-v <vid>]'",
                 Worker = GetVersions,
                 Examples = new List<string> {
                     @"get versions -d <did> [-v <vid>]",
-                    @"g versions -d 8b803ff47462494dafecc822"
+                    @"g versions -d <did>"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = false, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1}
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = false, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1}
                 }}},
             {@"GET_USERS", new Command {
                 Description = @"Get user: 'onshapeConsoleApp GET users -u <uid>'",
@@ -95,7 +95,7 @@ namespace Onshape.Api.ConsoleApp
                     @"g users current"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.USER_ID, MinArgs = 1, MaxArgs = 1, Description = "user id"}
+                    new CommandOption {Required = true, Token = Constants.USER_ID, MinArgs = 1, MaxArgs = 1, Description = "user id"}
                 }}},
             {@"GET_ELEMENTS", new Command {
                 Description = @"Get elements",
@@ -104,10 +104,10 @@ namespace Onshape.Api.ConsoleApp
                     @"get elements -d <did> [-v <vid> | -w <wid>] [-e <eid>]"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
-                    new CommandOption {Reqiuired = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
+                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                 }}},
             {@"DOWNLOAD_PARTSTUDIO", new Command {
                 Description = @"Download partstudio",
@@ -117,11 +117,11 @@ namespace Onshape.Api.ConsoleApp
                     @"download partstudio -d DID -w WID -e EID -f 'c:/dev/p.stl' stl"
                 },
                 Options = new List<CommandOption> { 
-                    new CommandOption {Reqiuired = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
-                    new CommandOption {Reqiuired = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
-                    new CommandOption {Reqiuired = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
                 }}},
             {@"GET_PLANS", new Command {
                 Description = @"Get purchasable plans",

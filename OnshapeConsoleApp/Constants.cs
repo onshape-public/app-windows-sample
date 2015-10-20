@@ -55,7 +55,7 @@ namespace Onshape.Api.ConsoleApp
         internal const string BASE_URI = @"BASE_URI";
         internal const string OAUTH_TOKEN = @"TOKEN";
         internal const string OAUTH_REFRESH_TOKEN = @"REFRESH_TOKEN";
-        internal const string LOGING_LEVEL = @"LOGING_LEVEL";
+        internal const string LOGGING_LEVEL = @"LOGING_LEVEL";
         internal const string INTERACTIVE_MODE = @"INTERACTIVE_MODE";
         internal const string OUTPUT_FORMAT = @"OUTPUT_FORMAT";
         internal const string EXIT = @"EXIT";
@@ -112,7 +112,7 @@ namespace Onshape.Api.ConsoleApp
             {@"-t", OAUTH_TOKEN},
             {@"-r", OAUTH_REFRESH_TOKEN},
             {@"-i", INTERACTIVE_MODE},
-            {@"-l", LOGING_LEVEL},
+            {@"-l", LOGGING_LEVEL},
             {@"-f", FILE},
             {@"-outputFormat", OUTPUT_FORMAT},
             {@"-o", OUTPUT_FORMAT},
@@ -121,11 +121,11 @@ namespace Onshape.Api.ConsoleApp
 
         internal static List<CommandOption> globalOptions = new List<CommandOption>
         {
-            new CommandOption {Reqiuired = false, Token = Constants.BASE_URI, MinArgs = 1, MaxArgs = 1},
-            new CommandOption {Reqiuired = false, Token = Constants.OAUTH_TOKEN, MinArgs = 1, MaxArgs = 1},
-            new CommandOption {Reqiuired = false, Token = Constants.OAUTH_REFRESH_TOKEN, MinArgs = 1, MaxArgs = 1},
-            new CommandOption {Reqiuired = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1},
-            new CommandOption {Reqiuired = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1}
+            new CommandOption {Required = false, Token = Constants.BASE_URI, MinArgs = 1, MaxArgs = 1},
+            new CommandOption {Required = false, Token = Constants.OAUTH_TOKEN, MinArgs = 1, MaxArgs = 1},
+            new CommandOption {Required = false, Token = Constants.OAUTH_REFRESH_TOKEN, MinArgs = 1, MaxArgs = 1},
+            new CommandOption {Required = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1},
+            new CommandOption {Required = false, Token = Constants.INTERACTIVE_MODE, MinArgs = 0, MaxArgs = 1}
         };
 
         #endregion
