@@ -114,8 +114,7 @@ namespace Onshape.Api.Client
             }
             catch (Exception e)
             {
-                response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
-                response.ReasonPhrase = e.Message;
+                throw new OnshapeClientException("Authorization token refresh failed", e);
             }
         }
 
@@ -157,7 +156,10 @@ namespace Onshape.Api.Client
                             {
                                 newRequest.Properties.Add(property);
                             }
-                            if (response.RequestMessage.Content != null) newRequest.Content = new StreamContent(response.RequestMessage.Content.ReadAsStreamAsync().Result);
+                            if (response.RequestMessage.Content != null)
+                            {
+                                newRequest.Content = new StreamContent(response.RequestMessage.Content.ReadAsStreamAsync().Result);
+                            }
                             if (response.StatusCode == HttpStatusCode.Redirect
                                 || response.StatusCode == HttpStatusCode.Found
                                 || response.StatusCode == HttpStatusCode.SeeOther)

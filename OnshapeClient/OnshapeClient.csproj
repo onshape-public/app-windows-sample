@@ -61,6 +61,7 @@
     <Compile Include="Model\OnshapeVersion.cs" />
     <Compile Include="Model\OnshapeWorkspace.cs" />
     <Compile Include="OnshapeClient.cs" />
+    <Compile Include="OnshapeClientException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
