@@ -3,14 +3,23 @@ using OnshapeAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Onshape.Api.ConsoleApp
 {
-    class Program 
+    class Program
     {
+        #region global context
+        
+        internal static Dictionary<String, List<String>> OptionValueCache { get; set; }
+
+        internal static CommandExecutionContext BaseExecutionContext { get; set; }
+
+        #endregion
+
         #region Command line utils
 
         private static ParsedCommandLine ParseCommand(ParsedCommandLine cmdLine)
@@ -66,6 +75,7 @@ namespace Onshape.Api.ConsoleApp
                             {
                                 currentValues = new List<String>();
                                 optionValues.Add(currentOption.Token, currentValues);
+                                OptionValueCache[currentOption.Token] = currentValues;
                             }
                             ++index;
                             continue;
@@ -106,7 +116,14 @@ namespace Onshape.Api.ConsoleApp
             foreach(CommandOption o in options) {
                 if (o.Required && !optionValues.ContainsKey(o.Token) && o.MutuallyExclusive == null)
                 {
-                    throw new CommandLineParseException(String.Format(@"{0} is required", o.Token));
+                    if (OptionValueCache.ContainsKey(o.Token))
+                    {
+                        optionValues.Add(o.Token, OptionValueCache[o.Token]);
+                    }
+                    else
+                    {
+                        throw new CommandLineParseException(String.Format(@"{0} is required", o.Token));
+                    }
                 }
                 if (optionValues.ContainsKey(o.Token))
                 {
@@ -174,8 +191,6 @@ namespace Onshape.Api.ConsoleApp
 
         #region Command execution context 
 
-        private static CommandExecutionContext baseExecutionContext;
-
         private static CommandExecutionContext ConstructExecutionContext(String baseUri, String clientId, String clientSecret, String oauthToken, String oauthRefreshToken, Boolean interactiveMode)
         {
             if (oauthToken == null)
@@ -193,16 +208,37 @@ namespace Onshape.Api.ConsoleApp
                     throw new Exception("'clientSecret' is not specified: Please, set ONSHAPE_CLIENT_SECRET environment variable");
                 }
 
-                // Authenticate as Onshape Application
-                OnshapeOAuth onshapeOAuth = new OnshapeOAuth(baseUri, clientId, clientSecret);
-                Console.WriteLine("Opening browser window for Onshape authentication...");
-                onshapeOAuth.AuthenticateBlocking();
-                oauthToken = onshapeOAuth.AccessToken;
-                oauthRefreshToken = onshapeOAuth.RefreshToken;
+                // Read refresh token from registry
+                oauthRefreshToken = Utils.GetRegistry(Constants.REFRESH_TOKEN_KEY_NAME);
+
+                if (String.IsNullOrEmpty(oauthRefreshToken))
+                {
+                    // Authenticate as Onshape Application
+                    OnshapeOAuth onshapeOAuth = new OnshapeOAuth(baseUri, clientId, clientSecret);
+                    Console.WriteLine("Opening browser window for Onshape authentication...");
+                    onshapeOAuth.AuthenticateBlocking();
+                    oauthToken = onshapeOAuth.AccessToken;
+                    oauthRefreshToken = onshapeOAuth.RefreshToken;
+                    Utils.SetRegistry(Constants.REFRESH_TOKEN_KEY_NAME, oauthRefreshToken);
+                }
             }
 
             // Initialize Onshape client
             OnshapeClient client = new OnshapeClient { AccessToken = oauthToken, RefreshToken = oauthRefreshToken, BaseUri = baseUri, ClientId = clientId, ClientSecret = clientSecret };
+
+            // Refresh token if needed
+            if (oauthToken == null)
+            {
+                Task<string> t = client.GetRefreshedOAuthToken();
+                try {
+                    t.Wait(Constants.TOKEN_REFRESH_TIME_OUT);
+                    client.AccessToken = t.Result;
+                }
+                catch (Exception) 
+                {
+                    Console.WriteLine("Error: token refresh failed");
+                }
+            }
 
             // Construct command execution context
             return new CommandExecutionContext { BaseURL = baseUri, InteractiveMode = interactiveMode, OAuthToken = oauthToken, OAuthRefreshToken = oauthRefreshToken, Client = client };
@@ -219,17 +255,18 @@ namespace Onshape.Api.ConsoleApp
             String oauthRefreshToken = cmdLine.Options.ContainsKey(Constants.OAUTH_REFRESH_TOKEN) && cmdLine.Options[Constants.OAUTH_REFRESH_TOKEN].Count == 1 ? cmdLine.Options[Constants.OAUTH_REFRESH_TOKEN][0] : Environment.GetEnvironmentVariable(Constants.ONSHAPE_OAUTH_REFRESH_TOKEN);
             Boolean interactiveMode = cmdLine.Options.ContainsKey(Constants.INTERACTIVE_MODE);
 
-            if (baseExecutionContext != null)
+            if (BaseExecutionContext != null)
             {
-                Boolean sameAsBaseContext = String.Equals(baseExecutionContext.BaseURL, baseUri, StringComparison.InvariantCultureIgnoreCase);
-                sameAsBaseContext = sameAsBaseContext && (oauthToken == null || String.Equals(baseExecutionContext.OAuthToken, oauthToken, StringComparison.InvariantCultureIgnoreCase));
-                sameAsBaseContext = sameAsBaseContext && (oauthRefreshToken == null || String.Equals(baseExecutionContext.OAuthRefreshToken, oauthRefreshToken, StringComparison.InvariantCultureIgnoreCase));
+                Boolean sameAsBaseContext = String.Equals(BaseExecutionContext.BaseURL, baseUri, StringComparison.InvariantCultureIgnoreCase);
+                sameAsBaseContext = sameAsBaseContext && (oauthToken == null || String.Equals(BaseExecutionContext.OAuthToken, oauthToken, StringComparison.InvariantCultureIgnoreCase));
+                sameAsBaseContext = sameAsBaseContext && (oauthRefreshToken == null || String.Equals(BaseExecutionContext.OAuthRefreshToken, oauthRefreshToken, StringComparison.InvariantCultureIgnoreCase));
                 // Return base context if no changes
-                result = sameAsBaseContext ? baseExecutionContext : ConstructExecutionContext(baseUri, clientId, clientSecret, oauthToken, oauthRefreshToken, interactiveMode);
+                result = sameAsBaseContext ? BaseExecutionContext : ConstructExecutionContext(baseUri, clientId, clientSecret, oauthToken, oauthRefreshToken, interactiveMode);
             }
             else
             {
                 result = ConstructExecutionContext(baseUri, clientId, clientSecret, oauthToken, oauthRefreshToken, interactiveMode);
+                BaseExecutionContext = result;
             }
 
             return result;
@@ -266,17 +303,17 @@ namespace Onshape.Api.ConsoleApp
                 try
                 {
                     // Initialize command execution context
-                    baseExecutionContext = InitExecutionContext(cmdLine);
+                    BaseExecutionContext = InitExecutionContext(cmdLine);
 
                     // Execute command
                     if (cmdLine.Command != null)
                     {
-                        await cmdLine.Command.Worker(baseExecutionContext, cmdLine.Options, cmdLine.Values);
+                        await cmdLine.Command.Worker(BaseExecutionContext, cmdLine.Options, cmdLine.Values);
                     }
 
-                    if (baseExecutionContext.InteractiveMode)
+                    if (BaseExecutionContext.InteractiveMode)
                     {
-                        CommandExecutionContext executionContext = baseExecutionContext;
+                        CommandExecutionContext executionContext = BaseExecutionContext;
                         string pattern = @"\s*(""([^""])*""|'([^'])*'|([^""\s])*)";
                         do {
                             Console.Write(Constants.INTERACTIVE_PROMPT);
@@ -305,7 +342,7 @@ namespace Onshape.Api.ConsoleApp
                                     executionContext = InitExecutionContext(cmdLine);
 
                                     // Execute command
-                                    await cmdLine.Command.Worker(baseExecutionContext, cmdLine.Options, cmdLine.Values);
+                                    await cmdLine.Command.Worker(BaseExecutionContext, cmdLine.Options, cmdLine.Values);
                                 }
                                 catch (Exception e)
                                 {
@@ -325,6 +362,7 @@ namespace Onshape.Api.ConsoleApp
 
         static int Main(string[] args)
         {
+            OptionValueCache = new Dictionary<String, List<String>>();
             RunAsync(args).Wait();
             return exitCode;
         }

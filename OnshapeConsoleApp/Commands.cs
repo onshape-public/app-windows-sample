@@ -109,9 +109,141 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
                     new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                 }}},
+            {@"GET_PARTSTUDIO_TRANSLATION_FORMATS", new Command {
+                Description = @"Get partstudio translation formats",
+                Worker = ExportImportCommands.GetPartstudioTranslationFormats,
+                Examples = new List<string> {
+                    @"get partstudio translation formats -d <did> -w <wid> -e <eid>",
+                    @"get partstudio translation formats -d DID -w WID -e EID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                }}},
+            {@"CREATE_PARTSTUDIO_TRANSLATION", new Command {
+                Description = @"Create partstudio translation",
+                Worker = ExportImportCommands.CreatePartStudioTranslation,
+                Examples = new List<string> {
+                    @"create partstudio translation -d <did> -w <wid> -e <eid> --format <f> [--formatVersion <v>]",
+                    @"create partstudio translation -d DID -w WID -e EID --format PARASOLID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                    new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                }}},
+            {@"GET_ASSEMBLY_TRANSLATION_FORMATS", new Command {
+                Description = @"Get assembly translation formats",
+                Worker = ExportImportCommands.GetAssemblyTranslationFormats,
+                Examples = new List<string> {
+                    @"get assembly translation formats -d <did> -w <wid> -e <eid>",
+                    @"get assembly translation formats -d DID -w WID -e EID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                }}},
+            {@"CREATE_ASSEMBLY_TRANSLATION", new Command {
+                Description = @"Create assembly translation",
+                Worker = ExportImportCommands.CreateAssemblyTranslation,
+                Examples = new List<string> {
+                    @"create assembly translation -d <did> -w <wid> -e <eid> --format <f> [--formatVersion <v>]",
+                    @"create assembly translation -d DID -w WID -e EID --format PARASOLID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                    new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                }}},
+            {@"GET_BLOBELEMENT_TRANSLATION_FORMATS", new Command {
+                Description = @"Get assembly translation formats",
+                Worker = ExportImportCommands.GetBlobElementTranslationFormats,
+                Examples = new List<string> {
+                    @"get blobelement translation formats -d <did> -w <wid> -e <eid>",
+                    @"get blobelement translation formats -d DID -w WID -e EID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                }}},
+            {@"CREATE_BLOBELEMENT_TRANSLATION", new Command {
+                Description = @"Create blobelement translation",
+                Worker = ExportImportCommands.CreateAssemblyTranslation,
+                Examples = new List<string> {
+                    @"create blobelement translation -d <did> -w <wid> -e <eid> --format <f> [--formatVersion <v>]",
+                    @"create blobelement translation -d DID -w WID -e EID --format PARASOLID"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                    new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                }}},
+            {@"UPLOAD_BLOBELEMENT", new Command {
+                Description = @"Create blobelement",
+                Worker = ExportImportCommands.UploadBlobelement,
+                Examples = new List<string> {
+                    @"upload blobelement -d <did> -w <wid> -f fileName",
+                    @"upload blobelement -d DID -w WID -f 'c:/dev/p.x_t'"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
+            {@"POST_BLOBELEMENT", new Command {
+                Description = @"Update blobelement",
+                Worker = ExportImportCommands.UpdateBlobelement,
+                Examples = new List<string> {
+                    @"post blobelement -d <did> -w <wid> -e <eid> -f fileName",
+                    @"post blobelement -d DID -w WID -e EID -f 'c:/dev/p.x_t'"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
+            {@"DOWNLOAD_BLOBELEMENT", new Command {
+                Description = @"Download blobelement",
+                Worker = ExportImportCommands.DownloadBlobelement,
+                Examples = new List<string> {
+                    @"download blobelement -d <did> (-v <vid> | -w <wid>) -e <eid> [-f fileName]",
+                    @"download blobelement -d DID -w WID -e EID -f 'c:/dev/p.dat'"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
+            {@"DOWNLOAD_PART", new Command {
+                Description = @"Download partstudio",
+                Worker = ExportImportCommands.DownloadPartstudio,
+                Examples = new List<string> {
+                    @"download part -d <did> (-v <vid> | -w <wid>) -e <eid> -p <pid> [-f fileName] [stl|parasolid]",
+                    @"download part -d DID -w WID -e EID -p JHD -f 'c:/dev/p.stl' stl"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = true, Token = Constants.PART_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
             {@"DOWNLOAD_PARTSTUDIO", new Command {
                 Description = @"Download partstudio",
-                Worker = DownloadPartstudio,
+                Worker = ExportImportCommands.DownloadPartstudio,
                 Examples = new List<string> {
                     @"download partstudio -d <did> (-v <vid> | -w <wid>) -e <eid> [-f fileName] [stl|parasolid]",
                     @"download partstudio -d DID -w WID -e EID -f 'c:/dev/p.stl' stl"
@@ -122,6 +254,45 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                     new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
+            {@"CREATE_TRANSLATION", new Command {
+                Description = @"Create translation",
+                Worker = ExportImportCommands.CreateTranslation,
+                Examples = new List<string> {
+                    @"create translation -d <did> -w <wid> -f fileName",
+                    @"create translation -d DID -w WID -f 'c:/dev/p.x_t'"
+                },
+                Options = new List<CommandOption> { 
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                    new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
+                }}},
+            {@"GET_TRANSLATION", new Command {
+                Description = @"Get translation status",
+                Worker = ExportImportCommands.GetTranslationStatus,
+                Examples = new List<string> {
+                    @"GET translation --translationId <translationId>",
+                },
+                Options = new List<CommandOption> {
+                    new CommandOption {Required = true, Token = Constants.TRANSLATION_ID, MinArgs = 1, MaxArgs = 1, Description = "translation id"},
+                }}},
+            {@"GET_DOCUMENT_TRANSLATION", new Command {
+                Description = @"Get document translation status",
+                Worker = ExportImportCommands.GetDocumentTranslationStatus,
+                Examples = new List<string> {
+                    @"GET document translation -d <documentId>",
+                },
+                Options = new List<CommandOption> {
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
+                }}},
+            {@"DELETE_TRANSLATION", new Command {
+                Description = @"Delete translation status entry",
+                Worker = ExportImportCommands.DeleteTranslationStatus,
+                Examples = new List<string> {
+                    @"DELETE translation --translationId <translationId>",
+                },
+                Options = new List<CommandOption> {
+                    new CommandOption {Required = true, Token = Constants.TRANSLATION_ID, MinArgs = 1, MaxArgs = 1, Description = "translation id"},
                 }}},
             {@"GET_PLANS", new Command {
                 Description = @"Get purchasable plans",
@@ -155,6 +326,26 @@ namespace Onshape.Api.ConsoleApp
                     @"purchase <sku>",
                     @"purchase ENTERPRISE"
                 },
+                Options = new List<CommandOption> { 
+                }}},
+            {@"DEBUG_CONTEXT", new Command {
+                Description = @"Print out access tokens and cached option values",
+                Worker = DebugCommands.GetDebugContext,
+                Examples = new List<string> {
+                    @"debug context",
+                },
+                MinArgs = 0,
+                MaxArgs = 0,
+                Options = new List<CommandOption> { 
+                }}},
+            {@"DEBUG_CLEAR_CONTEXT", new Command {
+                Description = @"Clear access tokens and chached option values",
+                Worker = DebugCommands.ClearContext,
+                Examples = new List<string> {
+                    @"debug clear context",
+                },
+                MinArgs = 0,
+                MaxArgs = 0,
                 Options = new List<CommandOption> { 
                 }}},
             {@"HELP", new Command {
@@ -226,7 +417,12 @@ namespace Onshape.Api.ConsoleApp
                 {"ownerId", "undefined"},
                 {"encodedFileName", HttpUtility.UrlEncode(System.IO.Path.GetFileName(options[Constants.FILE][0]))}
             };
-            var response = await context.Client.HttpPostMultipartFormData(context.BaseURL + "/api/elements/upload/" + options[Constants.DOCUMENT_ID][0], formFields, options[Constants.FILE][0]);
+            String uploadUri = context.BaseURL + "/api/elements/upload/" + options[Constants.DOCUMENT_ID][0];
+            if (options.ContainsKey(Constants.WORKSPACE_ID))
+            {
+                uploadUri += "?workspaceId=" + options[Constants.WORKSPACE_ID][0];
+            }
+            var response = await context.Client.HttpPostMultipartFormData(uploadUri, formFields, options[Constants.FILE][0]);
             Console.WriteLine(String.Format("Response:\n{0}\nBody:\n{1}", response, await response.Content.ReadAsStringAsync()));
         }
 
@@ -336,45 +532,6 @@ namespace Onshape.Api.ConsoleApp
                 }
             }
         }
-        
-        internal static async Task DownloadPartstudio(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
-        {
-            string documentId = options[Constants.DOCUMENT_ID][0];
-            string wmvSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
-            string selectorId = (options.ContainsKey(Constants.WORKSPACE_ID)) ? options[Constants.WORKSPACE_ID][0] : options[Constants.VERSION_ID][0];
-            string elementId = options[Constants.ELEMENT_ID][0];
-            string format = (values != null && values.Count == 1) ? values[0] : "stl";
-            using(Stream contentStream = await context.Client.DownloadPartstudio(documentId, wmvSelector, selectorId, elementId, format)) 
-            {
-                if (contentStream != null)
-                {
-                    string fileName = options.ContainsKey(Constants.FILE) ? options[Constants.FILE][0] : null;
-                    if (fileName != null)
-                    {
-                        using (Stream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None, 1012 * 1024, true))
-                        {
-                            await contentStream.CopyToAsync(stream);
-                            Console.WriteLine("The partstudio has been downloaded to {0}", fileName);
-                        }
-                    }
-                    else
-                    {
-                        long bufferLength = (contentStream.Length>Constants.MAX_FILE_LENGTH_TO_PRINT_OUT)?Constants.MAX_FILE_LENGTH_TO_PRINT_OUT:contentStream.Length;
-                        byte[] buffer = new byte[bufferLength];
-                        contentStream.Read(buffer, 0, (int)contentStream.Length);
-                        Console.WriteLine(Encoding.ASCII.GetString(buffer));
-                        if (contentStream.Length > Constants.MAX_FILE_LENGTH_TO_PRINT_OUT)
-                        {
-                            Console.WriteLine("...");
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Download failed");
-                }
-            }
-        }
 
         internal static async Task Help(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
@@ -410,7 +567,31 @@ namespace Onshape.Api.ConsoleApp
                 }
                 else
                 {
-                    Console.WriteLine(String.Format("  Unknown command: {0}", commandName));
+                    Boolean foundFlag = false;
+                    foreach(var v in commands.Values) 
+                    {
+                        if (v.Description.ToUpperInvariant().Contains(commandName)) 
+                        {
+                            PrintCommandHelp("  ", v);
+                            foundFlag = true;
+                        }
+                        else
+                        {
+                            foreach (var s in v.Examples)
+                            {
+                                if (s != null && s.ToUpperInvariant().Contains(commandName))
+                                {
+                                    PrintCommandHelp("  ", v);
+                                    foundFlag = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!foundFlag)
+                    {
+                        Console.WriteLine(String.Format("  Unknown command: {0}", commandName));
+                    }
                 }
             }
             else

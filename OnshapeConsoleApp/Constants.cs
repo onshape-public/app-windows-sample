@@ -10,9 +10,12 @@ namespace Onshape.Api.ConsoleApp
     {
         #region Misc constants
 
-        internal const string DEFAULT_LOGING_LEVEL = "Info";
-        internal const string INTERACTIVE_PROMPT = "> ";
+        internal const string REGISTRY_KEY_FORMAT = @"HKEY_CURRENT_USER\Software\{0}\{1}";
+        internal const string DEFAULT_LOGING_LEVEL = @"Info";
+        internal const string INTERACTIVE_PROMPT = @"> ";
         internal const int MAX_FILE_LENGTH_TO_PRINT_OUT = 65536;
+        internal const string REFRESH_TOKEN_KEY_NAME = @"t";
+        internal const int TOKEN_REFRESH_TIME_OUT = 1000;
 
         #endregion
 
@@ -40,11 +43,22 @@ namespace Onshape.Api.ConsoleApp
         internal const string ELEMENT_ID = @"ELEMENT_ID";
         internal const string VALUE = @"VALUE";
         internal const string DOCUMENTS = @"DOCUMENTS";
+        internal const string DOCUMENT = @"DOCUMENT";
         internal const string WORKSPACES = @"WORKSPACES";
         internal const string VERSIONS = @"VERSIONS";
         internal const string USERS = @"USERS";
         internal const string ELEMENTS = @"ELEMENTS";
+        internal const string PART = @"PART";
+        internal const string ASSEMBLY = @"ASSEMBLY";
         internal const string PARTSTUDIO = @"PARTSTUDIO";
+        internal const string BLOBELEMENT = @"BLOBELEMENT";
+        internal const string TRANSLATION_ID = @"TRANSLATION_ID";
+        internal const string TRANSLATION = @"TRANSLATION";
+        internal const string FORMATS = @"FORMATS";
+        internal const string DEBUG = @"DEBUG";
+        internal const string CONTEXT = @"CONTEXT";
+        internal const string CLEAR = @"CLEAR";
+        internal const string CREATE = @"CREATE";
         internal const string DOWNLOAD = @"DOWNLOAD";
         internal const string PLANS = @"PLANS";
         internal const string PURCHASE = @"PURCHASE";
@@ -52,6 +66,9 @@ namespace Onshape.Api.ConsoleApp
         internal const string CONSUME = @"CONSUME";
         internal const string CANCEL = @"CANCEL";
         internal const string FILE = @"FILE";
+        internal const string FORMAT = @"FORMAT";
+        internal const string FORMAT_VERSION = @"FORMAT_VERSION";
+        internal const string PART_ID = @"PART_ID";
         internal const string BASE_URI = @"BASE_URI";
         internal const string OAUTH_TOKEN = @"TOKEN";
         internal const string OAUTH_REFRESH_TOKEN = @"REFRESH_TOKEN";
@@ -82,11 +99,21 @@ namespace Onshape.Api.ConsoleApp
             {@"DELETE", DELETE},
             {@"D", DELETE},
             {@"DOCUMENTS", DOCUMENTS},
+            {@"DOCUMENT", DOCUMENT},
             {@"WORKSPACES", WORKSPACES},
             {@"VERSIONS", VERSIONS},
             {@"USERS", USERS},
             {@"ELEMENTS", ELEMENTS},
+            {@"ASSEMBLY", ASSEMBLY},
+            {@"PART", PART},
             {@"PARTSTUDIO", PARTSTUDIO},
+            {@"BLOBELEMENT", BLOBELEMENT},
+            {@"TRANSLATION", TRANSLATION},
+            {@"FORMATS", FORMATS},
+            {@"DEBUG", DEBUG},
+            {@"CONTEXT", CONTEXT},
+            {@"CLEAR", CLEAR},
+            {@"CREATE", CREATE},
             {@"DOWNLOAD", DOWNLOAD},
             {@"PLANS", PLANS},
             {@"CANCEL", CANCEL},
@@ -114,7 +141,12 @@ namespace Onshape.Api.ConsoleApp
             {@"-i", INTERACTIVE_MODE},
             {@"-l", LOGGING_LEVEL},
             {@"-f", FILE},
-            {@"-outputFormat", OUTPUT_FORMAT},
+            {@"--partId", PART_ID},
+            {@"-p", PART_ID},
+            {@"--format", FORMAT},
+            {@"--formatVersion", FORMAT_VERSION},
+            {@"--translationId", TRANSLATION_ID},
+            {@"--outputFormat", OUTPUT_FORMAT},
             {@"-o", OUTPUT_FORMAT},
 
         };

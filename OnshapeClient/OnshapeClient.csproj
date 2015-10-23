@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Model\OnshapeElementTranslation.cs" />
     <Compile Include="Model\OnshapePurchase.cs" />
     <Compile Include="Model\OnshapeBillingPlan.cs" />
     <Compile Include="Model\OnshapeBillingPlanType.cs" />
@@ -57,6 +58,11 @@
     <Compile Include="Model\OnshapeSortOrder.cs" />
     <Compile Include="Model\OnshapeThumbnail.cs" />
     <Compile Include="Model\OnshapeThumbnails.cs" />
+    <Compile Include="Model\OnshapeTranslationFormat.cs" />
+    <Compile Include="Model\OnshapeTranslationParameters.cs" />
+    <Compile Include="Model\OnshapeTranslationStateType.cs" />
+    <Compile Include="Model\OnshapeTranslationStatus.cs" />
+    <Compile Include="Model\OnshapeTranslationStatusList.cs" />
     <Compile Include="Model\OnshapeUser.cs" />
     <Compile Include="Model\OnshapeVersion.cs" />
     <Compile Include="Model\OnshapeWorkspace.cs" />
