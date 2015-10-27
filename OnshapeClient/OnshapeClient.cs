@@ -22,19 +22,12 @@ namespace Onshape.Api.Client
 
         #region Utilities
 
-        private String constructGetDocumentsUri(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
+        private static string constructGetDocumentsUri(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
         {
-            StringBuilder uri = new StringBuilder(Constants.DOCUMENTS_API_URI);
-            String queryString = constructGetDocumentsQueryString(filter, owner, ownerType, sortColumn, sortOrder, offset, limit);
-            if (queryString != null && queryString.Length > 0)
-            {
-                uri.Append("?");
-                uri.Append(queryString.ToString());
-            }
-            return uri.ToString();
+            return appendQueryString(Constants.DOCUMENTS_API_URI, constructGetDocumentsQueryString(filter, owner, ownerType, sortColumn, sortOrder, offset, limit));
         }
 
-        private String constructGetDocumentsQueryString(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
+        private static string constructGetDocumentsQueryString(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
         {
             StringBuilder queryString = new StringBuilder();
             if (offset != Constants.USE_API_DEFAULT)
@@ -64,6 +57,77 @@ namespace Onshape.Api.Client
             if (sortOrder != null)
             {
                 queryString.AppendQueryParam("sortOrder", sortOrder.Value == OnshapeSortOrder.ASC ? "asc" : "desc" );
+            }
+            return queryString.ToString();
+        }
+
+        private static string appendQueryString(string uri, string query)
+        {
+            string result = uri;
+            if (!String.IsNullOrEmpty(query)){
+                StringBuilder builder = new StringBuilder(uri);
+                builder.Append("?");
+                builder.Append(query.ToString());
+                result =  builder.ToString();
+            }
+            return result;
+        }
+
+        private static string constructExportToParasolidQueryString(String version, string[] partIds = null)
+        {
+            StringBuilder queryString = new StringBuilder();
+            if (!String.IsNullOrEmpty(version))
+            {
+                queryString.AppendQueryParam("version", version);
+            }
+            if (partIds != null && partIds.Length > 0)
+            {
+                queryString.AppendQueryParam("partIds", WebUtility.UrlEncode(String.Join(",", partIds)));
+            }
+            return queryString.ToString();
+        }
+
+        private static string constructExportToStlQueryString(OnshapeStlExportParameters parameters, string[] partIds = null)
+        {
+            StringBuilder queryString = new StringBuilder();
+            if (parameters != null)
+            {
+                if (parameters.angleTolerance != null && parameters.angleTolerance.HasValue)
+                {
+                    queryString.AppendQueryParam("angleTolerance", parameters.angleTolerance.Value);
+                }
+                if (parameters.chordTolerance != null && parameters.chordTolerance.HasValue)
+                {
+                    queryString.AppendQueryParam("chordTolerance", parameters.chordTolerance.Value);
+                }
+                if (parameters.grouping != null && parameters.grouping.HasValue)
+                {
+                    queryString.AppendQueryParam("grouping", parameters.grouping.Value);
+                }
+                if (parameters.maxFacetWidth != null && parameters.maxFacetWidth.HasValue)
+                {
+                    queryString.AppendQueryParam("maxFacetWidth", parameters.maxFacetWidth.Value);
+                }
+                if (parameters.minFacetWidth != null && parameters.minFacetWidth.HasValue)
+                {
+                    queryString.AppendQueryParam("minFacetWidth", parameters.minFacetWidth.Value);
+                }
+                if (!String.IsNullOrEmpty(parameters.mode))
+                {
+                    queryString.AppendQueryParam("mode", parameters.mode);
+                }
+                if (parameters.scale != null && parameters.scale.HasValue)
+                {
+                    queryString.AppendQueryParam("scale", parameters.scale.Value);
+                }
+                if (!String.IsNullOrEmpty(parameters.units))
+                {
+                    queryString.AppendQueryParam("units", parameters.units);
+                }
+            }
+            if (partIds != null && partIds.Length > 0)
+            {
+                queryString.AppendQueryParam("partIds", WebUtility.UrlEncode(String.Join(",", partIds)));
             }
             return queryString.ToString();
         }
@@ -180,12 +244,15 @@ namespace Onshape.Api.Client
             }
         }
 
-        private HttpClient ConstructHttpClient()
+        private HttpClient ConstructHttpClient(Boolean initDefaultHeaders = true)
         {
             var handler = new RedirectMessageHandler(new HttpClientHandler() { AllowAutoRedirect = false });
             HttpClient client = new HttpClient(handler);
             client.BaseAddress = new Uri(BaseUri);
-            InitDefaultHeaders(client);
+            if (initDefaultHeaders)
+            {
+                InitDefaultHeaders(client);
+            }
             return client;
         }
 
@@ -198,6 +265,38 @@ namespace Onshape.Api.Client
                 response = await operation();
             }
             return response;
+        }
+
+        public async Task<string> GetRefreshedOAuthToken()
+        {
+            string result = null;
+            using (HttpClient client = ConstructHttpClient(false))
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, String.Format(Constants.TOKEN_URI_TEMPLATE, BaseUri));
+                request.Content = new FormUrlEncodedContent(new Dictionary<String, String>() {
+                    {"grant_type", "refresh_token"},
+                    {"refresh_token", RefreshToken},
+                    {"client_id", ClientId},
+                    {"client_secret", ClientSecret}
+                });
+                HttpResponseMessage response = null;
+                try
+                {
+                    using (response = await client.SendAsync(request))
+                    {
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            OnshapeRefreshTokenResponse refreshToken = await response.Content.ReadAsAsync<OnshapeRefreshTokenResponse>();
+                            result = refreshToken.access_token;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new OnshapeClientException("Authorization token refresh failed", e);
+                }
+            }
+            return result;
         }
 
         public async Task<HttpResponseMessage> HttpGet(String uri)
@@ -229,7 +328,7 @@ namespace Onshape.Api.Client
             }
         }
 
-        public async Task<HttpResponseMessage> HttpPostMultipartFormData(String uri, Dictionary<string, string> fields, string fileName)
+        public async Task<HttpResponseMessage> HttpPostMultipartFormData(String uri, Dictionary<string, string> fields, string fileName, byte[] fileData = null)
         {
             using (var client = ConstructHttpClient())
             {
@@ -242,8 +341,8 @@ namespace Onshape.Api.Client
                             content.Add(new StringContent(v.Value), v.Key);
                         }
                     }
-                    var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes(fileName));
-                    fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue ("form-data") { FileName = System.IO.Path.GetFileName(fileName) };
+                    var fileContent = new ByteArrayContent(fileData == null ? System.IO.File.ReadAllBytes(fileName) : fileData);
+                    fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { FileName = System.IO.Path.GetFileName(fileName), Name = "file" };
                     content.Add(fileContent);
                     HttpResponseMessage response = await doWithTokenRefresh(client, ()=>client.PostAsync(uri, content));
                     return response;
@@ -259,6 +358,19 @@ namespace Onshape.Api.Client
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<T>();
+                }
+                throw new Exception(response.ToString());
+            }
+        }
+
+        public async Task<R> HttpPost<T, R>(String uri, T value)
+        {
+            using (var client = ConstructHttpClient())
+            {
+                HttpResponseMessage response = await doWithTokenRefresh(client, () => client.PostAsJsonAsync(uri, value));
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<R>();
                 }
                 throw new Exception(response.ToString());
             }
@@ -404,15 +516,176 @@ namespace Onshape.Api.Client
 
         #region Partstudios
 
-        public async Task<Stream> DownloadPartstudio(String documentId, String wmvSelector, String selectorId, String elementId, String format)
+        public async Task<Stream> ExportPartstudioToStl(String documentId, String wvmSelector, String selectorId, String elementId, OnshapeStlExportParameters paramters, string[] partIds)
         {
             Stream result = null;
-            var response = await HttpGet(String.Format(Constants.DOWNLOAD_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, format));
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wvmSelector, selectorId, elementId, Constants.STL_FORMAT_NAME),
+                constructExportToStlQueryString(paramters, partIds)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 result = await response.Content.ReadAsStreamAsync();
             }
             return result;
+        }
+        public async Task<Stream> ExportPartstudioToParasolid(String documentId, String wvmSelector, String selectorId, String elementId, String formatVersion, string[] partIds)
+        {
+            Stream result = null;
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wvmSelector, selectorId, elementId, Constants.PARASOLID_FORMAT_NAME),
+                constructExportToParasolidQueryString(formatVersion, partIds)));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+        public async Task<List<OnshapeTranslationFormat>> GetPartstudioTranslationFormats(String documentId, String workspaceId, String elementId)
+        {
+            List<OnshapeTranslationFormat> result = null;
+            var response = await HttpGet(String.Format(Constants.ELEMENT_TRANSLATION_FORMATS_API_URI, Constants.PARTSTUDIOS_PATH_NAME, documentId, workspaceId, elementId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<List<OnshapeTranslationFormat>>();
+            }
+            return result;
+        }
+        public async Task<OnshapeTranslationStatus> CreatePartstudioTranslation(String documentId, String workspaceId, String elementId, OnshapePartstudioTranslationParameters parameters)
+        {
+            return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.PARTSTUDIOS_PATH_NAME, documentId, workspaceId, elementId), parameters);
+        }
+
+        #endregion
+
+        #region Assemblies
+
+        public async Task<List<OnshapeTranslationFormat>> GetAssemblyTranslationFormats(String documentId, String workspaceId, String elementId)
+        {
+            List<OnshapeTranslationFormat> result = null;
+            var response = await HttpGet(String.Format(Constants.ELEMENT_TRANSLATION_FORMATS_API_URI, Constants.ASSEMBLIES_PATH_NAME, documentId, workspaceId, elementId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<List<OnshapeTranslationFormat>>();
+            }
+            return result;
+        }
+        public async Task<OnshapeTranslationStatus> CreateAssemblyTranslation(String documentId, String workspaceId, String elementId, OnshapeTranslationParameters parameters)
+        {
+            return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.ASSEMBLIES_PATH_NAME, documentId, workspaceId, elementId), parameters);
+        }
+
+        #endregion
+
+        #region Parts
+
+        public async Task<Stream> ExportPartToStl(String documentId, String wvmSelector, String selectorId, String elementId, String partId, OnshapeStlExportParameters parameters)
+        {
+            Stream result = null;
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wvmSelector, selectorId, elementId, partId, Constants.STL_FORMAT_NAME),
+                constructExportToStlQueryString(parameters)));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+
+        public async Task<Stream> ExportPartToParasolid(String documentId, String wvmSelector, String selectorId, String elementId, String partId, string formatVersion)
+        {
+            Stream result = null;
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wvmSelector, selectorId, elementId, partId, Constants.PARASOLID_FORMAT_NAME),
+                constructExportToParasolidQueryString(formatVersion)));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region Blobelementds
+
+        public async Task<Stream> DownloadBlobelement(String documentId, String wvmSelector, String selectorId, String elementId)
+        {
+            Stream result = null;
+            var response = await HttpGet(String.Format(Constants.BLOB_ELEMENT_API_URI, documentId, wvmSelector, selectorId, elementId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+        public async Task<OnshapeElementTranslation> CreateBlobelement(String documentId, String workspaceId, Dictionary<String, String> fields, String fileName, byte[] fileData = null)
+        {
+            OnshapeElementTranslation result = null;
+            var response = await HttpPostMultipartFormData(String.Format(Constants.BLOB_ELEMENTS_API_URI, documentId, "w", workspaceId), fields, fileName, fileData);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<OnshapeElementTranslation>();
+            }
+            return result;
+        }
+        public async Task<OnshapeElementTranslation> UpdateBlobelement(String documentId, String workspaceId, String elementId, Dictionary<String, String> fields, String fileName, byte[] fileData = null)
+        {
+            OnshapeElementTranslation result = null;
+            var response = await HttpPostMultipartFormData(String.Format(Constants.BLOB_ELEMENT_API_URI, documentId, "w", workspaceId, elementId), fields, fileName, fileData);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<OnshapeElementTranslation>();
+            }
+            return result;
+        }
+        public async Task<List<OnshapeTranslationFormat>> GetBlobelementTranslationFormats(String documentId, String workspaceId, String elementId)
+        {
+            List<OnshapeTranslationFormat> result = null;
+            var response = await HttpGet(String.Format(Constants.ELEMENT_TRANSLATION_FORMATS_API_URI, Constants.BLOBELEMENTS_PATH_NAME, documentId, workspaceId, elementId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<List<OnshapeTranslationFormat>>();
+            }
+            return result;
+        }
+        public async Task<OnshapeTranslationStatus> CreateBlobelementTranslation(String documentId, String workspaceId, String elementId, OnshapeBlobTranslationParameters parameters)
+        {
+            return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.BLOBELEMENTS_PATH_NAME, documentId, workspaceId, elementId), parameters);
+        }
+
+        #endregion
+
+        #region Translations
+
+        public async Task<OnshapeTranslationStatus> CreateTranslation(String documentId, String workspaceId, Dictionary<string, string> fields, String fileName, byte[] fileData = null)
+        {
+            OnshapeTranslationStatus result = null;
+            var response = await HttpPostMultipartFormData(String.Format(Constants.CREATE_TRANSLATION_API_URI, documentId, workspaceId), fields, fileName, fileData);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<OnshapeTranslationStatus>();
+            }
+            return result;
+        }
+        public async Task<OnshapeTranslationStatus> GetTranslationStatus(String translationId)
+        {
+            OnshapeTranslationStatus result = null;
+            var response = await HttpGet(String.Format(Constants.TRANSLATION_API_URI, translationId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<OnshapeTranslationStatus>();
+            }
+            return result;
+        }
+        public async Task<OnshapeTranslationStatusList> GetDocumentTranslationStatus(String documentId)
+        {
+            OnshapeTranslationStatusList result = null;
+            var response = await HttpGet(String.Format(Constants.DOCUMENT_TRANSLATIONS_API_URI, documentId));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsAsync<OnshapeTranslationStatusList>();
+            }
+            return result;
+        }
+        public async Task DeleteTranslationStatusEntry(String translationId)
+        {
+            await HttpDelete(String.Format(Constants.TRANSLATION_API_URI, translationId));
         }
 
         #endregion

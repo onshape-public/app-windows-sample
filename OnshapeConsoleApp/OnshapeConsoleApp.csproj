@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="CommandExecutionContext.cs" />
     <Compile Include="CommandImpl\BillingCommands.cs" />
+    <Compile Include="CommandImpl\DebugCommands.cs" />
+    <Compile Include="CommandImpl\ExportImportCommands.cs" />
     <Compile Include="CommandLineParseException.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Command.cs" />
