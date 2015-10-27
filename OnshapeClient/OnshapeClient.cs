@@ -106,11 +106,11 @@ namespace Onshape.Api.Client
                 }
                 if (parameters.maxFacetWidth != null && parameters.maxFacetWidth.HasValue)
                 {
-                    queryString.AppendQueryParam("maxFaceWidth", parameters.maxFacetWidth.Value);
+                    queryString.AppendQueryParam("maxFacetWidth", parameters.maxFacetWidth.Value);
                 }
                 if (parameters.minFacetWidth != null && parameters.minFacetWidth.HasValue)
                 {
-                    queryString.AppendQueryParam("minFaceWidth", parameters.minFacetWidth.Value);
+                    queryString.AppendQueryParam("minFacetWidth", parameters.minFacetWidth.Value);
                 }
                 if (!String.IsNullOrEmpty(parameters.mode))
                 {
@@ -516,10 +516,10 @@ namespace Onshape.Api.Client
 
         #region Partstudios
 
-        public async Task<Stream> ExportPartstudioToStl(String documentId, String wmvSelector, String selectorId, String elementId, OnshapeStlExportParameters paramters, string[] partIds)
+        public async Task<Stream> ExportPartstudioToStl(String documentId, String wvmSelector, String selectorId, String elementId, OnshapeStlExportParameters paramters, string[] partIds)
         {
             Stream result = null;
-            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, Constants.STL_FORMAT_NAME),
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wvmSelector, selectorId, elementId, Constants.STL_FORMAT_NAME),
                 constructExportToStlQueryString(paramters, partIds)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -527,10 +527,10 @@ namespace Onshape.Api.Client
             }
             return result;
         }
-        public async Task<Stream> ExportPartstudioToParasolid(String documentId, String wmvSelector, String selectorId, String elementId, String formatVersion, string[] partIds)
+        public async Task<Stream> ExportPartstudioToParasolid(String documentId, String wvmSelector, String selectorId, String elementId, String formatVersion, string[] partIds)
         {
             Stream result = null;
-            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, Constants.PARASOLID_FORMAT_NAME),
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wvmSelector, selectorId, elementId, Constants.PARASOLID_FORMAT_NAME),
                 constructExportToParasolidQueryString(formatVersion, partIds)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -567,7 +567,7 @@ namespace Onshape.Api.Client
             }
             return result;
         }
-        public async Task<OnshapeTranslationStatus> CreateAssemblyTranslation(String documentId, String workspaceId, String elementId, OnshapeAssemblyTranslationParameters parameters)
+        public async Task<OnshapeTranslationStatus> CreateAssemblyTranslation(String documentId, String workspaceId, String elementId, OnshapeTranslationParameters parameters)
         {
             return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.ASSEMBLIES_PATH_NAME, documentId, workspaceId, elementId), parameters);
         }
@@ -576,10 +576,10 @@ namespace Onshape.Api.Client
 
         #region Parts
 
-        public async Task<Stream> ExportPartToStl(String documentId, String wmvSelector, String selectorId, String elementId, String partId, OnshapeStlExportParameters parameters)
+        public async Task<Stream> ExportPartToStl(String documentId, String wvmSelector, String selectorId, String elementId, String partId, OnshapeStlExportParameters parameters)
         {
             Stream result = null;
-            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wmvSelector, selectorId, elementId, partId, Constants.STL_FORMAT_NAME),
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wvmSelector, selectorId, elementId, partId, Constants.STL_FORMAT_NAME),
                 constructExportToStlQueryString(parameters)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -588,10 +588,10 @@ namespace Onshape.Api.Client
             return result;
         }
 
-        public async Task<Stream> ExportPartToParasolid(String documentId, String wmvSelector, String selectorId, String elementId, String partId, string formatVersion)
+        public async Task<Stream> ExportPartToParasolid(String documentId, String wvmSelector, String selectorId, String elementId, String partId, string formatVersion)
         {
             Stream result = null;
-            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wmvSelector, selectorId, elementId, partId, Constants.PARASOLID_FORMAT_NAME),
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wvmSelector, selectorId, elementId, partId, Constants.PARASOLID_FORMAT_NAME),
                 constructExportToParasolidQueryString(formatVersion)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -604,10 +604,10 @@ namespace Onshape.Api.Client
 
         #region Blobelementds
 
-        public async Task<Stream> DownloadBlobelement(String documentId, String wmvSelector, String selectorId, String elementId)
+        public async Task<Stream> DownloadBlobelement(String documentId, String wvmSelector, String selectorId, String elementId)
         {
             Stream result = null;
-            var response = await HttpGet(String.Format(Constants.BLOB_ELEMENT_API_URI, documentId, wmvSelector, selectorId, elementId));
+            var response = await HttpGet(String.Format(Constants.BLOB_ELEMENT_API_URI, documentId, wvmSelector, selectorId, elementId));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 result = await response.Content.ReadAsStreamAsync();

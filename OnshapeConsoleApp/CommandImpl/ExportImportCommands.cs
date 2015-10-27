@@ -15,14 +15,14 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
         internal static async Task ExportPartstudio(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
             string documentId = options[Constants.DOCUMENT_ID][0];
-            string wmvSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
+            string wvmSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
             string selectorId = (options.ContainsKey(Constants.WORKSPACE_ID)) ? options[Constants.WORKSPACE_ID][0] : options[Constants.VERSION_ID][0];
             string elementId = options[Constants.ELEMENT_ID][0];
             string format = options[Constants.FORMAT][0];
             switch (format.ToUpperInvariant())
             {
                 case "STL":
-                    using (Stream contentStream = await context.Client.ExportPartstudioToStl(documentId, wmvSelector, selectorId, elementId,
+                    using (Stream contentStream = await context.Client.ExportPartstudioToStl(documentId, wvmSelector, selectorId, elementId,
                         Utils.createStlExportParams(options), values != null ? values.ToArray() : null))
                     {
                         await Utils.ProcessContentStream(contentStream, options);
@@ -30,7 +30,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
                     break;
                 case "PARASOLID":
                     string formatVersion = options.GetOptionValue(Constants.FORMAT_VERSION);
-                    using (Stream contentStream = await context.Client.ExportPartstudioToParasolid(documentId, wmvSelector, selectorId, elementId, formatVersion, values != null?values.ToArray():null))
+                    using (Stream contentStream = await context.Client.ExportPartstudioToParasolid(documentId, wvmSelector, selectorId, elementId, formatVersion, values != null?values.ToArray():null))
                     {
                         await Utils.ProcessContentStream(contentStream, options);
                     }
@@ -67,25 +67,15 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
         }
         internal static async Task CreateAssemblyTranslation(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
-            OnshapeAssemblyTranslationParameters translationParameters = new OnshapeAssemblyTranslationParameters()
+            OnshapeTranslationParameters translationParameters = new OnshapeTranslationParameters()
             {
                 formatName = options.GetOptionValue(Constants.FORMAT),
                 versionString = options.GetOptionValue(Constants.FORMAT_VERSION)
             };
-            string flattenAssembliesStr = options.GetOptionValue(Constants.FLATTEN_ASSEMBLIES);
             string storeInDocumentStr = options.GetOptionValue(Constants.STORE_IN_DOCUMENT);
-            string yAxisIsUpStr = options.GetOptionValue(Constants.Y_AXIS_IS_UP);
-            if (!String.IsNullOrEmpty(flattenAssembliesStr))
-            {
-                translationParameters.flattenAssemblies = Boolean.Parse(flattenAssembliesStr);
-            }
             if (!String.IsNullOrEmpty(storeInDocumentStr))
             {
                 translationParameters.storeInDocument = Boolean.Parse(storeInDocumentStr);
-            }
-            if (!String.IsNullOrEmpty(yAxisIsUpStr))
-            {
-                translationParameters.yAxisIsUp = Boolean.Parse(yAxisIsUpStr);
             }
             OnshapeTranslationStatus status = await context.Client.CreateAssemblyTranslation(options[Constants.DOCUMENT_ID][0], options[Constants.WORKSPACE_ID][0], options[Constants.ELEMENT_ID][0], translationParameters);
             Console.WriteLine(JsonConvert.SerializeObject(status, Formatting.Indented));
@@ -103,7 +93,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
             }
             if (yAxisIsUpStr != null)
             {
-                formFields["yAxisIsUpStr"] = yAxisIsUpStr;
+                formFields["yAxisIsUp"] = yAxisIsUpStr;
             }
             var response = await context.Client.CreateBlobelement(options[Constants.DOCUMENT_ID][0], options[Constants.WORKSPACE_ID][0], formFields, options[Constants.FILE][0]);
             Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
@@ -121,7 +111,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
             }
             if (yAxisIsUpStr != null)
             {
-                formFields["yAxisIsUpStr"] = yAxisIsUpStr;
+                formFields["yAxisIsUp"] = yAxisIsUpStr;
             }
             var response = await context.Client.UpdateBlobelement(options[Constants.DOCUMENT_ID][0], options[Constants.WORKSPACE_ID][0], options[Constants.ELEMENT_ID][0], formFields, options[Constants.FILE][0]);
             Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
@@ -129,10 +119,10 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
         internal static async Task DownloadBlobelement(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
             string documentId = options[Constants.DOCUMENT_ID][0];
-            string wmvSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
+            string wvmSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
             string selectorId = (options.ContainsKey(Constants.WORKSPACE_ID)) ? options[Constants.WORKSPACE_ID][0] : options[Constants.VERSION_ID][0];
             string elementId = options[Constants.ELEMENT_ID][0];
-            using (Stream contentStream = await context.Client.DownloadBlobelement(documentId, wmvSelector, selectorId, elementId))
+            using (Stream contentStream = await context.Client.DownloadBlobelement(documentId, wvmSelector, selectorId, elementId))
             {
                 await Utils.ProcessContentStream(contentStream, options);
             }
@@ -140,7 +130,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
         internal static async Task ExportPart(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
             string documentId = options[Constants.DOCUMENT_ID][0];
-            string wmvSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
+            string wvmSelector = (options.ContainsKey(Constants.WORKSPACE_ID)) ? "w" : "v";
             string selectorId = (options.ContainsKey(Constants.WORKSPACE_ID)) ? options[Constants.WORKSPACE_ID][0] : options[Constants.VERSION_ID][0];
             string elementId = options[Constants.ELEMENT_ID][0];
             string partId = options[Constants.PART_ID][0];
@@ -148,7 +138,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
             switch (format.ToUpperInvariant())
             {
                 case "STL":
-                    using (Stream contentStream = await context.Client.ExportPartToStl(documentId, wmvSelector, selectorId, elementId, partId,
+                    using (Stream contentStream = await context.Client.ExportPartToStl(documentId, wvmSelector, selectorId, elementId, partId,
                         Utils.createStlExportParams(options)))
                     {
                         await Utils.ProcessContentStream(contentStream, options);
@@ -156,7 +146,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
                     break;
                 case "PARASOLID":
                     string formatVersion = options.GetOptionValue(Constants.FORMAT_VERSION);
-                    using (Stream contentStream = await context.Client.ExportPartToParasolid(documentId, wmvSelector, selectorId, elementId, partId, formatVersion))
+                    using (Stream contentStream = await context.Client.ExportPartToParasolid(documentId, wvmSelector, selectorId, elementId, partId, formatVersion))
                     {
                         await Utils.ProcessContentStream(contentStream, options);
                     }
@@ -212,7 +202,7 @@ namespace Onshape.Api.ConsoleApp.CommandImpl
             }
             if (yAxisIsUpStr != null)
             {
-                formFields["yAxisIsUpStr"] = yAxisIsUpStr;
+                formFields["yAxisIsUp"] = yAxisIsUpStr;
             }
             OnshapeTranslationStatus status = await context.Client.CreateTranslation(options[Constants.DOCUMENT_ID][0], options[Constants.WORKSPACE_ID][0], formFields, options[Constants.FILE][0]);
             Console.WriteLine(JsonConvert.SerializeObject(status, Formatting.Indented));

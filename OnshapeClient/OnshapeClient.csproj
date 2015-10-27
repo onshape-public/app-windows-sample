@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Model\OnshapeAssemblyTranslationParameters.cs" />
     <Compile Include="Model\OnshapeBlobTranslationParameters.cs" />
     <Compile Include="Model\OnshapeElementTranslation.cs" />
     <Compile Include="Model\OnshapePartstudioTranslationParameters.cs" />
