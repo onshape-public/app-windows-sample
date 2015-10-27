@@ -441,23 +441,6 @@ namespace Onshape.Api.ConsoleApp
             }
         }
 
-        internal static async Task Upload(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
-        {
-            Dictionary<String, String> formFields = new Dictionary<String, String> {
-                {"flattenAssemblies", "false"},
-                {"yAcisIsUp", "false"},
-                {"ownerId", "undefined"},
-                {"encodedFileName", HttpUtility.UrlEncode(System.IO.Path.GetFileName(options[Constants.FILE][0]))}
-            };
-            String uploadUri = context.BaseURL + "/api/elements/upload/" + options[Constants.DOCUMENT_ID][0];
-            if (options.ContainsKey(Constants.WORKSPACE_ID))
-            {
-                uploadUri += "?workspaceId=" + options[Constants.WORKSPACE_ID][0];
-            }
-            var response = await context.Client.HttpPostMultipartFormData(uploadUri, formFields, options[Constants.FILE][0]);
-            Console.WriteLine(String.Format("Response:\n{0}\nBody:\n{1}", response, await response.Content.ReadAsStringAsync()));
-        }
-
         internal static async Task GetDocuments(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
         {
             if (options.ContainsKey(Constants.DOCUMENT_ID))
