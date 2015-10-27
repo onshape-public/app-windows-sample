@@ -161,9 +161,7 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
                     new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
                     new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"},
-                    new CommandOption {Required = false, Token = Constants.STORE_IN_DOCUMENT, MinArgs = 0, MaxArgs = 1},
-                    new CommandOption {Required = false, Token = Constants.Y_AXIS_IS_UP, MinArgs = 0, MaxArgs = 1},
-                    new CommandOption {Required = false, Token = Constants.FLATTEN_ASSEMBLIES, MinArgs = 0, MaxArgs = 1}
+                    new CommandOption {Required = false, Token = Constants.STORE_IN_DOCUMENT, MinArgs = 0, MaxArgs = 1}
                 }}},
             {@"GET_BLOBELEMENT_TRANSLATION_FORMATS", new Command {
                 Description = @"Get assembly translation formats",
