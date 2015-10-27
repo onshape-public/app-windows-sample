@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using Onshape.Api.Client.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -166,6 +167,52 @@ namespace Onshape.Api.ConsoleApp
             catch (Exception)
             {
                 Console.WriteLine("Error: registry read failed");
+            }
+            return result;
+        }
+
+        #endregion
+
+        #region Export
+
+        internal static OnshapeStlExportParameters createStlExportParams(Dictionary<string, List<string>> options)
+        {
+            string angleToleranceStr = options.GetOptionValue(Constants.ANGLE_TOLERANCE);
+            string chordToleranceStr = options.GetOptionValue(Constants.CHORD_TOLERANCE);
+            string groupingStr = options.GetOptionValue(Constants.GROUPING);
+            string maxFacetWidthStr = options.GetOptionValue(Constants.MAX_FACET_WIDTH);
+            string minFacetWidthStr = options.GetOptionValue(Constants.MIN_FACET_WIDTH);
+            string modeStr = options.GetOptionValue(Constants.MODE);
+            string scaleStr = options.GetOptionValue(Constants.SCALE);
+            string unitsStr = options.GetOptionValue(Constants.UNITS);
+            OnshapeStlExportParameters result = new OnshapeStlExportParameters
+            {
+                mode = modeStr,
+                units = unitsStr
+            };
+            if (angleToleranceStr != null)
+            {
+                result.angleTolerance = Double.Parse(angleToleranceStr);
+            }
+            if (chordToleranceStr != null)
+            {
+                result.chordTolerance = Double.Parse(chordToleranceStr);
+            }
+            if (groupingStr != null)
+            {
+                result.grouping = Boolean.Parse(groupingStr);
+            }
+            if (maxFacetWidthStr != null)
+            {
+                result.maxFacetWidth = Double.Parse(maxFacetWidthStr);
+            }
+            if (minFacetWidthStr != null)
+            {
+                result.minFacetWidth = Double.Parse(minFacetWidthStr);
+            }
+            if (scaleStr != null)
+            {
+                result.scale = Double.Parse(scaleStr);
             }
             return result;
         }

@@ -22,19 +22,12 @@ namespace Onshape.Api.Client
 
         #region Utilities
 
-        private String constructGetDocumentsUri(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
+        private static string constructGetDocumentsUri(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
         {
-            StringBuilder uri = new StringBuilder(Constants.DOCUMENTS_API_URI);
-            String queryString = constructGetDocumentsQueryString(filter, owner, ownerType, sortColumn, sortOrder, offset, limit);
-            if (queryString != null && queryString.Length > 0)
-            {
-                uri.Append("?");
-                uri.Append(queryString.ToString());
-            }
-            return uri.ToString();
+            return appendQueryString(Constants.DOCUMENTS_API_URI, constructGetDocumentsQueryString(filter, owner, ownerType, sortColumn, sortOrder, offset, limit));
         }
 
-        private String constructGetDocumentsQueryString(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
+        private static string constructGetDocumentsQueryString(Nullable<OnshapeDocumentFilterType> filter = null, String owner = null, Nullable<OnshapeDocumentOwnerType> ownerType = null, String sortColumn = null, Nullable<OnshapeSortOrder> sortOrder = OnshapeSortOrder.ASC, int offset = Constants.USE_API_DEFAULT, int limit = Constants.USE_API_DEFAULT)
         {
             StringBuilder queryString = new StringBuilder();
             if (offset != Constants.USE_API_DEFAULT)
@@ -64,6 +57,77 @@ namespace Onshape.Api.Client
             if (sortOrder != null)
             {
                 queryString.AppendQueryParam("sortOrder", sortOrder.Value == OnshapeSortOrder.ASC ? "asc" : "desc" );
+            }
+            return queryString.ToString();
+        }
+
+        private static string appendQueryString(string uri, string query)
+        {
+            string result = uri;
+            if (!String.IsNullOrEmpty(query)){
+                StringBuilder builder = new StringBuilder(uri);
+                builder.Append("?");
+                builder.Append(query.ToString());
+                result =  builder.ToString();
+            }
+            return result;
+        }
+
+        private static string constructExportToParasolidQueryString(String version, string[] partIds = null)
+        {
+            StringBuilder queryString = new StringBuilder();
+            if (!String.IsNullOrEmpty(version))
+            {
+                queryString.AppendQueryParam("version", version);
+            }
+            if (partIds != null && partIds.Length > 0)
+            {
+                queryString.AppendQueryParam("partIds", WebUtility.UrlEncode(String.Join(",", partIds)));
+            }
+            return queryString.ToString();
+        }
+
+        private static string constructExportToStlQueryString(OnshapeStlExportParameters parameters, string[] partIds = null)
+        {
+            StringBuilder queryString = new StringBuilder();
+            if (parameters != null)
+            {
+                if (parameters.angleTolerance != null && parameters.angleTolerance.HasValue)
+                {
+                    queryString.AppendQueryParam("angleTolerance", parameters.angleTolerance.Value);
+                }
+                if (parameters.chordTolerance != null && parameters.chordTolerance.HasValue)
+                {
+                    queryString.AppendQueryParam("chordTolerance", parameters.chordTolerance.Value);
+                }
+                if (parameters.grouping != null && parameters.grouping.HasValue)
+                {
+                    queryString.AppendQueryParam("grouping", parameters.grouping.Value);
+                }
+                if (parameters.maxFacetWidth != null && parameters.maxFacetWidth.HasValue)
+                {
+                    queryString.AppendQueryParam("maxFaceWidth", parameters.maxFacetWidth.Value);
+                }
+                if (parameters.minFacetWidth != null && parameters.minFacetWidth.HasValue)
+                {
+                    queryString.AppendQueryParam("minFaceWidth", parameters.minFacetWidth.Value);
+                }
+                if (!String.IsNullOrEmpty(parameters.mode))
+                {
+                    queryString.AppendQueryParam("mode", parameters.mode);
+                }
+                if (parameters.scale != null && parameters.scale.HasValue)
+                {
+                    queryString.AppendQueryParam("scale", parameters.scale.Value);
+                }
+                if (!String.IsNullOrEmpty(parameters.units))
+                {
+                    queryString.AppendQueryParam("units", parameters.units);
+                }
+            }
+            if (partIds != null && partIds.Length > 0)
+            {
+                queryString.AppendQueryParam("partIds", WebUtility.UrlEncode(String.Join(",", partIds)));
             }
             return queryString.ToString();
         }
@@ -452,10 +516,22 @@ namespace Onshape.Api.Client
 
         #region Partstudios
 
-        public async Task<Stream> DownloadPartstudio(String documentId, String wmvSelector, String selectorId, String elementId, String format)
+        public async Task<Stream> ExportPartstudioToStl(String documentId, String wmvSelector, String selectorId, String elementId, OnshapeStlExportParameters paramters, string[] partIds)
         {
             Stream result = null;
-            var response = await HttpGet(String.Format(Constants.DOWNLOAD_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, format));
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, Constants.STL_FORMAT_NAME),
+                constructExportToStlQueryString(paramters, partIds)));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+        public async Task<Stream> ExportPartstudioToParasolid(String documentId, String wmvSelector, String selectorId, String elementId, String formatVersion, string[] partIds)
+        {
+            Stream result = null;
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PARTSTUDIO_API_URI, documentId, wmvSelector, selectorId, elementId, Constants.PARASOLID_FORMAT_NAME),
+                constructExportToParasolidQueryString(formatVersion, partIds)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 result = await response.Content.ReadAsStreamAsync();
@@ -472,7 +548,7 @@ namespace Onshape.Api.Client
             }
             return result;
         }
-        public async Task<OnshapeTranslationStatus> CreatePartstudioTranslation(String documentId, String workspaceId, String elementId, OnshapeTranslationParameters parameters)
+        public async Task<OnshapeTranslationStatus> CreatePartstudioTranslation(String documentId, String workspaceId, String elementId, OnshapePartstudioTranslationParameters parameters)
         {
             return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.PARTSTUDIOS_PATH_NAME, documentId, workspaceId, elementId), parameters);
         }
@@ -491,7 +567,7 @@ namespace Onshape.Api.Client
             }
             return result;
         }
-        public async Task<OnshapeTranslationStatus> CreateAssemblyTranslation(String documentId, String workspaceId, String elementId, OnshapeTranslationParameters parameters)
+        public async Task<OnshapeTranslationStatus> CreateAssemblyTranslation(String documentId, String workspaceId, String elementId, OnshapeAssemblyTranslationParameters parameters)
         {
             return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.ASSEMBLIES_PATH_NAME, documentId, workspaceId, elementId), parameters);
         }
@@ -500,10 +576,23 @@ namespace Onshape.Api.Client
 
         #region Parts
 
-        public async Task<Stream> DownloadPart(String documentId, String wmvSelector, String selectorId, String elementId, String partId, String format)
+        public async Task<Stream> ExportPartToStl(String documentId, String wmvSelector, String selectorId, String elementId, String partId, OnshapeStlExportParameters parameters)
         {
             Stream result = null;
-            var response = await HttpGet(String.Format(Constants.DOWNLOAD_PART_API_URI, documentId, wmvSelector, selectorId, elementId, partId, format));
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wmvSelector, selectorId, elementId, partId, Constants.STL_FORMAT_NAME),
+                constructExportToStlQueryString(parameters)));
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                result = await response.Content.ReadAsStreamAsync();
+            }
+            return result;
+        }
+
+        public async Task<Stream> ExportPartToParasolid(String documentId, String wmvSelector, String selectorId, String elementId, String partId, string formatVersion)
+        {
+            Stream result = null;
+            var response = await HttpGet(appendQueryString(String.Format(Constants.EXPORT_PART_API_URI, documentId, wmvSelector, selectorId, elementId, partId, Constants.PARASOLID_FORMAT_NAME),
+                constructExportToParasolidQueryString(formatVersion)));
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 result = await response.Content.ReadAsStreamAsync();
@@ -555,7 +644,7 @@ namespace Onshape.Api.Client
             }
             return result;
         }
-        public async Task<OnshapeTranslationStatus> CreateBlobelementTranslation(String documentId, String workspaceId, String elementId, OnshapeTranslationParameters parameters)
+        public async Task<OnshapeTranslationStatus> CreateBlobelementTranslation(String documentId, String workspaceId, String elementId, OnshapeBlobTranslationParameters parameters)
         {
             return await HttpPost<OnshapeTranslationParameters, OnshapeTranslationStatus>(String.Format(Constants.ELEMENT_TRANSLATIONS_API_URI, Constants.BLOBELEMENTS_PATH_NAME, documentId, workspaceId, elementId), parameters);
         }

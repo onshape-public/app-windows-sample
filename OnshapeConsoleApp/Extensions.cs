@@ -156,5 +156,10 @@ namespace Onshape.Api.ConsoleApp
                 new string[] { "Name", "Created At", "Id", "Permissions", "Size(bytes)" }
                 );
         }
+
+        public static string GetOptionValue(this Dictionary<string, List<string>> options, string name)
+        {
+            return options != null && options.ContainsKey(name) ? options[name][0] : null;
+        }
     }
 }

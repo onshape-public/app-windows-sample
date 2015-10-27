@@ -125,7 +125,7 @@ namespace Onshape.Api.ConsoleApp
                 Description = @"Create partstudio translation",
                 Worker = ExportImportCommands.CreatePartStudioTranslation,
                 Examples = new List<string> {
-                    @"create partstudio translation -d <did> -w <wid> -e <eid> --format <f> [--formatVersion <v>]",
+                    @"create partstudio translation -d <did> -w <wid> -e <eid> --format <f> [--formatVersion <v>] [partId1 ...]",
                     @"create partstudio translation -d DID -w WID -e EID --format PARASOLID"
                 },
                 Options = new List<CommandOption> { 
@@ -133,7 +133,8 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
                     new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
                     new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
-                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"},
+                    new CommandOption {Required = false, Token = Constants.STORE_IN_DOCUMENT, MinArgs = 0, MaxArgs = 1}
                 }}},
             {@"GET_ASSEMBLY_TRANSLATION_FORMATS", new Command {
                 Description = @"Get assembly translation formats",
@@ -159,7 +160,10 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
                     new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
-                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"},
+                    new CommandOption {Required = false, Token = Constants.STORE_IN_DOCUMENT, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.Y_AXIS_IS_UP, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FLATTEN_ASSEMBLIES, MinArgs = 0, MaxArgs = 1}
                 }}},
             {@"GET_BLOBELEMENT_TRANSLATION_FORMATS", new Command {
                 Description = @"Get assembly translation formats",
@@ -183,9 +187,12 @@ namespace Onshape.Api.ConsoleApp
                 Options = new List<CommandOption> { 
                     new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
                     new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
-                    new CommandOption {Required = false, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
+                    new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "element id"},
                     new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format name"},
-                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"}
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1, Description = "format version"},
+                    new CommandOption {Required = false, Token = Constants.STORE_IN_DOCUMENT, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.Y_AXIS_IS_UP, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FLATTEN_ASSEMBLIES, MinArgs = 0, MaxArgs = 1}
                 }}},
             {@"UPLOAD_BLOBELEMENT", new Command {
                 Description = @"Create blobelement",
@@ -226,12 +233,12 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                     new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
                 }}},
-            {@"DOWNLOAD_PART", new Command {
-                Description = @"Download partstudio",
-                Worker = ExportImportCommands.DownloadPartstudio,
+            {@"EXPORT_PART", new Command {
+                Description = @"Export part",
+                Worker = ExportImportCommands.ExportPart,
                 Examples = new List<string> {
-                    @"download part -d <did> (-v <vid> | -w <wid>) -e <eid> -p <pid> [-f fileName] [stl|parasolid]",
-                    @"download part -d DID -w WID -e EID -p JHD -f 'c:/dev/p.stl' stl"
+                    @"export part -d <did> (-v <vid> | -w <wid>) -e <eid> -p <pid> [-f fileName] --format [stl|parasolid] <partId>",
+                    @"export part -d DID -w WID -e EID --format stl -f 'c:/dev/p.stl' -p JHD"
                 },
                 Options = new List<CommandOption> { 
                     new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
@@ -239,32 +246,57 @@ namespace Onshape.Api.ConsoleApp
                     new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
                     new CommandOption {Required = true, Token = Constants.PART_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FORMAT, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.Y_AXIS_IS_UP, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FLATTEN_ASSEMBLIES, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.GROUPING, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.SCALE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.UNITS, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.ANGLE_TOLERANCE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.CHORD_TOLERANCE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MAX_FACET_WIDTH, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MIN_FACET_WIDTH, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MODE, MinArgs = 0, MaxArgs = 1},
                     new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
                 }}},
-            {@"DOWNLOAD_PARTSTUDIO", new Command {
-                Description = @"Download partstudio",
-                Worker = ExportImportCommands.DownloadPartstudio,
+            {@"EXPORT_PARTSTUDIO", new Command {
+                Description = @"Export partstudio",
+                Worker = ExportImportCommands.ExportPartstudio,
                 Examples = new List<string> {
-                    @"download partstudio -d <did> (-v <vid> | -w <wid>) -e <eid> [-f fileName] [stl|parasolid]",
-                    @"download partstudio -d DID -w WID -e EID -f 'c:/dev/p.stl' stl"
+                    @"export partstudio -d <did> (-v <vid> | -w <wid>) -e <eid> [-f fileName] --format [stl|parasolid] [partId1 ...]",
+                    @"export partstudio -d DID -w WID -e EID -f 'c:/dev/p.stl' --format stl"
                 },
                 Options = new List<CommandOption> { 
                     new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
                     new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.VERSION_ID}, Description = "workspace id"},
                     new CommandOption {Required = true, Token = Constants.VERSION_ID, MinArgs = 1, MaxArgs = 1, MutuallyExclusive = new HashSet<String> {Constants.WORKSPACE_ID}, Description = "version id"},
                     new CommandOption {Required = true, Token = Constants.ELEMENT_ID, MinArgs = 1, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FORMAT, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FORMAT_VERSION, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.Y_AXIS_IS_UP, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.FLATTEN_ASSEMBLIES, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.GROUPING, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.SCALE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.UNITS, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.ANGLE_TOLERANCE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.CHORD_TOLERANCE, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MAX_FACET_WIDTH, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MIN_FACET_WIDTH, MinArgs = 0, MaxArgs = 1},
+                    new CommandOption {Required = false, Token = Constants.MODE, MinArgs = 0, MaxArgs = 1},
                     new CommandOption {Required = false, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
                 }}},
             {@"CREATE_TRANSLATION", new Command {
                 Description = @"Create translation",
                 Worker = ExportImportCommands.CreateTranslation,
                 Examples = new List<string> {
-                    @"create translation -d <did> -w <wid> -f fileName",
-                    @"create translation -d DID -w WID -f 'c:/dev/p.x_t'"
+                    @"create translation -d <did> -w <wid> -f fileName --format <f>",
+                    @"create translation -d DID -w WID -f 'c:/dev/p.x_t' --format parasolid"
                 },
                 Options = new List<CommandOption> { 
                     new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "document id"},
                     new CommandOption {Required = true, Token = Constants.WORKSPACE_ID, MinArgs = 1, MaxArgs = 1, Description = "workspace id"},
+                    new CommandOption {Required = true, Token = Constants.FORMAT, MinArgs = 1, MaxArgs = 1, Description = "format"},
                     new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"},
                 }}},
             {@"GET_TRANSLATION", new Command {

@@ -59,6 +59,7 @@ namespace Onshape.Api.ConsoleApp
         internal const string CONTEXT = @"CONTEXT";
         internal const string CLEAR = @"CLEAR";
         internal const string CREATE = @"CREATE";
+        internal const string EXPORT = @"EXPORT";
         internal const string DOWNLOAD = @"DOWNLOAD";
         internal const string PLANS = @"PLANS";
         internal const string PURCHASE = @"PURCHASE";
@@ -68,6 +69,17 @@ namespace Onshape.Api.ConsoleApp
         internal const string FILE = @"FILE";
         internal const string FORMAT = @"FORMAT";
         internal const string FORMAT_VERSION = @"FORMAT_VERSION";
+        internal const string STORE_IN_DOCUMENT = @"STORE_IN_DOCUMENT";
+        internal const string Y_AXIS_IS_UP = @"Y_AXIS_IS_UP";
+        internal const string FLATTEN_ASSEMBLIES = @"FLATTEN_ASSEMBLIES";
+        internal const string GROUPING = @"GROUPING";
+        internal const string SCALE = @"SCALE";
+        internal const string UNITS = @"UNITS";
+        internal const string ANGLE_TOLERANCE = @"ANGLE_TOLERANCE";
+        internal const string CHORD_TOLERANCE = @"CHORD_TOLERANCE";
+        internal const string MAX_FACET_WIDTH = @"MAX_FACET_WIDTH";
+        internal const string MIN_FACET_WIDTH = @"MIN_FACET_WIDTH";
+        internal const string MODE = @"MODE";
         internal const string PART_ID = @"PART_ID";
         internal const string BASE_URI = @"BASE_URI";
         internal const string OAUTH_TOKEN = @"TOKEN";
@@ -115,6 +127,7 @@ namespace Onshape.Api.ConsoleApp
             {@"CLEAR", CLEAR},
             {@"CREATE", CREATE},
             {@"DOWNLOAD", DOWNLOAD},
+            {@"EXPORT", EXPORT},
             {@"PLANS", PLANS},
             {@"CANCEL", CANCEL},
             {@"CONSUME", CONSUME},
@@ -146,6 +159,17 @@ namespace Onshape.Api.ConsoleApp
             {@"--format", FORMAT},
             {@"--formatVersion", FORMAT_VERSION},
             {@"--translationId", TRANSLATION_ID},
+            {@"--storeInDocument", STORE_IN_DOCUMENT},
+            {@"--yAxisIsUp", Y_AXIS_IS_UP},
+            {@"--flattenAssemblies", FLATTEN_ASSEMBLIES},
+            {@"--grouping", GROUPING},
+            {@"--scale", SCALE},
+            {@"--units", UNITS},
+            {@"--angleTolerance", ANGLE_TOLERANCE},
+            {@"--chordTolerance", CHORD_TOLERANCE},
+            {@"--maxFacetWidth", MAX_FACET_WIDTH},
+            {@"--minFacetwidth", MIN_FACET_WIDTH},
+            {@"--Mode", MODE},
             {@"--outputFormat", OUTPUT_FORMAT},
             {@"-o", OUTPUT_FORMAT},
 

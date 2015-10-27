@@ -31,8 +31,8 @@ namespace Onshape.Api.Client
 
         public const string USER_API_URI = @"/api/users/{0}";
 
-        public const string DOWNLOAD_PARTSTUDIO_API_URI = @"/api/partstudios/d/{0}/{1}/{2}/e/{3}/{4}";
-        public const string DOWNLOAD_PART_API_URI = @"/api/partstudios/d/{0}/{1}/{2}/e/{3}/partid/{4}/{5}";
+        public const string EXPORT_PARTSTUDIO_API_URI = @"/api/partstudios/d/{0}/{1}/{2}/e/{3}/{4}";
+        public const string EXPORT_PART_API_URI = @"/api/parts/d/{0}/{1}/{2}/e/{3}/partid/{4}/{5}";
 
         public const string PURCHASES_API_URI = @"/api/accounts/purchases";
         public const string PURCHASE_API_URI = @"/api/accounts/purchases/{0}";
@@ -54,9 +54,12 @@ namespace Onshape.Api.Client
 
         #region Misc constants
 
-        public const string ASSEMBLIES_PATH_NAME = "assemblies";
-        public const string PARTSTUDIOS_PATH_NAME = "partstudios";
-        public const string BLOBELEMENTS_PATH_NAME = "blobelements";
+        public const string ASSEMBLIES_PATH_NAME = @"assemblies";
+        public const string PARTSTUDIOS_PATH_NAME = @"partstudios";
+        public const string BLOBELEMENTS_PATH_NAME = @"blobelements";
+
+        public const string PARASOLID_FORMAT_NAME = @"parasolid";
+        public const string STL_FORMAT_NAME = @"stl";
 
         public const int USE_API_DEFAULT = -1;
 
