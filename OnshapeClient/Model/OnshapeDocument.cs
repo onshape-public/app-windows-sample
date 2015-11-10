@@ -21,5 +21,6 @@ namespace Onshape.Api.Client.Model
         public Boolean canUnshare { get; set; }
         public string permission { get; set; }
         public int sizeBytes { get; set; }
+        public OnshapeThumbnails thumbnail { get; set; }
     }
 }
