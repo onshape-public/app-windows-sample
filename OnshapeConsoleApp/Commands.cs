@@ -55,6 +55,17 @@ namespace Onshape.Api.ConsoleApp
                 Options = new List<CommandOption> { 
                     new CommandOption {Required = false, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "Document Id"}
                 }}},
+            {@"DOWNLOAD_THUMBNAIL", new Command {
+                Description = @"Download thumbnail",
+                Worker = DownloadThumbnail,
+                Examples = new List<string> {
+                    @"download thumbnail -d <did> -f <fileName>",
+                    @"download thumbnail -d 8b803ff47462494dafecc822 -f 'c:/tmp/a.png'"
+                },
+                Options = new List<CommandOption> {
+                    new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "Document Id"},
+                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 1, MaxArgs = 1, Description = "file name"}
+                }}},
             {@"POST_DOCUMENTS", new Command { 
                 Description = @"Create a new document",
                 Worker = CreateDocument,
@@ -458,6 +469,16 @@ namespace Onshape.Api.ConsoleApp
             {
                 List<OnshapeDocument> documents = await context.Client.GetDocuments();
                 documents.Print();
+            }
+        }
+
+        internal static async Task DownloadThumbnail(CommandExecutionContext context, Dictionary<string, List<string>> options, List<string> values)
+        {
+            string documentId = options[Constants.DOCUMENT_ID][0];
+            string fileName = options[Constants.FILE][0];
+            if (await context.Client.DownloadDocumentThumbnail(documentId, null, fileName))
+            {
+                Console.WriteLine("The thumbnail has been downloaded to {0}", fileName);
             }
         }
 

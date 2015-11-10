@@ -136,10 +136,10 @@ namespace Onshape.Api.Client
 
         #region Http utilities
 
-        private void InitDefaultHeaders(HttpClient client)
+        private void InitDefaultHeaders(HttpClient client, String mediaType = null)
         {
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType != null ? mediaType : "application/json"));
             client.DefaultRequestHeaders.Remove("Authorization");
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AccessToken);
         }
@@ -244,14 +244,14 @@ namespace Onshape.Api.Client
             }
         }
 
-        private HttpClient ConstructHttpClient(Boolean initDefaultHeaders = true)
+        private HttpClient ConstructHttpClient(Boolean initDefaultHeaders = true, String mediaType = null)
         {
             var handler = new RedirectMessageHandler(new HttpClientHandler() { AllowAutoRedirect = false });
             HttpClient client = new HttpClient(handler);
             client.BaseAddress = new Uri(BaseUri);
             if (initDefaultHeaders)
             {
-                InitDefaultHeaders(client);
+                InitDefaultHeaders(client, mediaType);
             }
             return client;
         }
@@ -299,9 +299,9 @@ namespace Onshape.Api.Client
             return result;
         }
 
-        public async Task<HttpResponseMessage> HttpGet(String uri)
+        public async Task<HttpResponseMessage> HttpGet(String uri, String mediaType = null)
         {
-            using (var client = ConstructHttpClient())
+            using (var client = ConstructHttpClient(true, mediaType))
             {
                 return await doWithTokenRefresh(client, ()=>client.GetAsync(uri));
             }
@@ -425,6 +425,47 @@ namespace Onshape.Api.Client
         public async Task<OnshapeDocument> GetDocument(String documentId)
         {
             return await HttpGet<OnshapeDocument>(String.Format(Constants.DOCUMENT_API_URI, documentId));
+        }
+        public async Task<Boolean> DownloadDocumentThumbnail(String documentId, String size, String thumbnailFileName)
+        {
+            Boolean result = false;
+            if (String.IsNullOrEmpty(documentId) || String.IsNullOrEmpty (thumbnailFileName))
+            {
+                return result;
+            }
+            OnshapeDocument d = await HttpGet<OnshapeDocument>(String.Format(Constants.DOCUMENT_API_URI, documentId));
+            if (d == null || d.thumbnail == null || d.thumbnail.sizes == null || d.thumbnail.sizes.Count == 0)
+            {
+                return result;
+            }
+            OnshapeThumbnail t = d.thumbnail.sizes[0];
+            if (!String.IsNullOrEmpty(size))
+            {
+                for (int i = 0; i < d.thumbnail.sizes.Count; ++i)
+                {
+                    if (size.Equals(d.thumbnail.sizes[i].size, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        t = d.thumbnail.sizes[i];
+                        break;
+                    }
+                }
+            }
+            if (t != null)
+            {
+                var response = await HttpGet(t.href, t.mediaType);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    using (Stream thumbnailStream = await response.Content.ReadAsStreamAsync())
+                    {
+                        using (Stream stream = new FileStream(thumbnailFileName, FileMode.Create, FileAccess.Write, FileShare.None, 1012 * 1024, true))
+                        {
+                            await thumbnailStream.CopyToAsync(stream);
+                            result = true;
+                        }
+                    }
+                }
+            }
+            return result;
         }
         public async Task<OnshapeDocument> CreateDocument(String name)
         {

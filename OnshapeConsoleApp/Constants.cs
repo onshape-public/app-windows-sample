@@ -61,6 +61,7 @@ namespace Onshape.Api.ConsoleApp
         internal const string CREATE = @"CREATE";
         internal const string EXPORT = @"EXPORT";
         internal const string DOWNLOAD = @"DOWNLOAD";
+        internal const string THUMBNAIL = @"THUMBNAIL";
         internal const string PLANS = @"PLANS";
         internal const string PURCHASE = @"PURCHASE";
         internal const string PURCHASES = @"PURCHASES";
@@ -127,6 +128,7 @@ namespace Onshape.Api.ConsoleApp
             {@"CLEAR", CLEAR},
             {@"CREATE", CREATE},
             {@"DOWNLOAD", DOWNLOAD},
+            {@"THUMBNAIL", THUMBNAIL},
             {@"EXPORT", EXPORT},
             {@"PLANS", PLANS},
             {@"CANCEL", CANCEL},
