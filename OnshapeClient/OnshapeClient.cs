@@ -422,7 +422,7 @@ namespace Onshape.Api.Client
             OnshapeDocuments documents = await HttpGet<OnshapeDocuments>(uri);
             return documents.items;
         }
-        public async Task<OnshapeDocument> GetDocument(String documentId, String thumbnailFileName = null)
+        public async Task<OnshapeDocument> GetDocument(String documentId)
         {
             return await HttpGet<OnshapeDocument>(String.Format(Constants.DOCUMENT_API_URI, documentId));
         }

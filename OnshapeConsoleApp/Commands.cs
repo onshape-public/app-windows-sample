@@ -64,7 +64,7 @@ namespace Onshape.Api.ConsoleApp
                 },
                 Options = new List<CommandOption> {
                     new CommandOption {Required = true, Token = Constants.DOCUMENT_ID, MinArgs = 1, MaxArgs = 1, Description = "Document Id"},
-                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 0, MaxArgs = 1, Description = "file name"}
+                    new CommandOption {Required = true, Token = Constants.FILE, MinArgs = 1, MaxArgs = 1, Description = "file name"}
                 }}},
             {@"POST_DOCUMENTS", new Command { 
                 Description = @"Create a new document",
