@@ -53,8 +53,8 @@ List of the user's document should be printed in JSON format, and interactive pr
 
 ## References
 
-- ![ Onshape Partner Development](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/a059a060a80a420ba7a4b534)
-- ![ Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
-- ![ Onshape partner development stack](https://partner.dev.onshape.com)
-- ![ Onshape developper portal](https://dev-portal.dev.onshape.com)
-- ![ Visual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
+- [ Onshape Partner Development](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/a059a060a80a420ba7a4b534)
+- [ Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
+- [ Onshape partner development stack](https://partner.dev.onshape.com)
+- [ Onshape developper portal](https://dev-portal.dev.onshape.com)
+- [ Visual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
