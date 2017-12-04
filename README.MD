@@ -6,18 +6,18 @@ Onshape Windows Sample is a collection of sample projects which demonstrate Onsh
 
 - [Visual Studio 2013](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) 
 
-- [Registered Onshape App](https://dev-portal.dev.onshape.com/oauthApps).
+- [Registered Onshape App](https://dev-portal.onshape.com/oauthApps).
 
 Sample Onshape App registration parameters:
 
 ![AppRegistration](AppRegistration.PNG)
 
-Base URL, Client Id, and Client Secret used by the sample are extracted from the environment variables. 
+`ONSHAPE_BASE_URI` should be set to `https://cad.onshape.com` The Client Id, and Client Secret used by the sample are extracted from the environment variables and should match the values from the [Developer Portal](https://dev-portal.onshape.com) 
 
 Environment variables can be set in developer command prompt before launching Visual Studio:
 
 ```
->SET ONSHAPE_BASE_URI=https://partner.dev.onshape.com 
+>SET ONSHAPE_BASE_URI=https://cad.onshape.com 
 >SET ONSHAPE_CLIENT_SECRET=TLLFGK56YJSL2... 
 >SET ONSHAPE_CLIENT_ID=K5SUPTJ3NX3LUA2...  
 ```
@@ -53,8 +53,5 @@ List of the user's document should be printed in JSON format, and interactive pr
 
 ## References
 
-- [ Onshape Partner Development](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/a059a060a80a420ba7a4b534)
-- [ Using OAuth 2.0 with Onshape](https://partner.dev.onshape.com/documents/8b803ff47462494dafecc822/w/3f7fd009244d434e87397169/e/b945dd68003a4ac692508ceb)
-- [ Onshape partner development stack](https://partner.dev.onshape.com)
-- [ Onshape developper portal](https://dev-portal.dev.onshape.com)
+- [ Onshape developper portal](https://dev-portal.onshape.com)
 - [ Visual Studio Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx)
