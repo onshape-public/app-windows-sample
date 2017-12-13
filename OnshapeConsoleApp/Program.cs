@@ -214,7 +214,7 @@ namespace Onshape.Api.ConsoleApp
                 if (String.IsNullOrEmpty(oauthRefreshToken))
                 {
                     // Authenticate as Onshape Application
-                    OnshapeOAuth onshapeOAuth = new OnshapeOAuth(baseUri, clientId, clientSecret);
+                    OnshapeOAuth onshapeOAuth = new OnshapeOAuth("https://oauth.onshape.com", clientId, clientSecret);
                     Console.WriteLine("Opening browser window for Onshape authentication...");
                     onshapeOAuth.AuthenticateBlocking();
                     oauthToken = onshapeOAuth.AccessToken;
