@@ -4,7 +4,7 @@ Onshape Windows Sample is a collection of sample projects which demonstrate Onsh
 
 ## Prerequisites
 
-- [Visual Studio 2013](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) 
+- [Visual Studio IDE](https://www.visualstudio.com/) (version 2019 has been tested and works)
 
 - [Registered Onshape App](https://dev-portal.onshape.com/oauthApps).
 
@@ -12,7 +12,9 @@ Sample Onshape App registration parameters:
 
 ![AppRegistration](AppRegistration.PNG)
 
-`ONSHAPE_BASE_URI` should be set to `https://cad.onshape.com` The Client Id, and Client Secret used by the sample are extracted from the environment variables and should match the values from the [Developer Portal](https://dev-portal.onshape.com) 
+Make sure to save the client secret (visible in a toast after app registration) and the client id.
+
+You'll need to set some environment variables to connect your desktop app to the app created via the dev portal. 
 
 Environment variables can be set in developer command prompt before launching Visual Studio:
 

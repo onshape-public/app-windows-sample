@@ -207,6 +207,7 @@ namespace OnshapeAPI
 
                AddLogEntry("Sending request for tokens...");
 
+               System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
                WebRequest wrRequest = WebRequest.Create(String.Format(TOKEN_URI_TEMPLATE, baseUri));
                wrRequest.Method = "POST";
                wrRequest.ContentType = "application/x-www-form-urlencoded";
