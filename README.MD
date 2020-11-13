@@ -14,6 +14,14 @@ Sample Onshape App registration parameters:
 
 Make sure to save the client secret (visible in a toast after app registration) and the client id.
 
+To specify a tab based extension click on the “Extensions” tab and “Add extension” in the [Developer Portal](https://dev-portal.onshape.com/)
+
+	- Name: `<Enter extension name>`
+	- Description(Optional): `<Enter extension description>`
+	- Location: `Element Tab`
+	- Action URL: `https://<url-from-heroku-create.herokuapp.com>
+	- Icon(Optional): `<Drop an image to upload>`
+
 You'll need to set some environment variables to connect your desktop app to the app created via the dev portal. 
 
 Environment variables can be set in developer command prompt before launching Visual Studio:
